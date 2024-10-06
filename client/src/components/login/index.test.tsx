@@ -1,7 +1,11 @@
-test("Submitting the login form calls the login api", () => {});
+import * as React from "react";
 
-test("The submit button is disabled by default", () => {});
+describe("Login", () => {
+  test("Submitting the login form calls the login api", () => {});
 
-test("typing into the fields display any error message if any", () => {});
+  test("The submit button is disabled by default", () => {});
 
-test("The submit button is enabled when all fields are correctly filled", () => {});
+  test("typing into the fields display any error message if any", () => {});
+
+  test("The submit button is enabled when all fields are correctly filled", () => {});
+});
