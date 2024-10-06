@@ -34,14 +34,12 @@ const Signup: React.FC<object> = function (): React.ReactNode {
       onSubmit={handleSubmit}
       noValidate
       aria-label="signup"
-      autoComplete="off"
     >
       <TextField
         onChange={handleChange}
         onBlur={handleBlur}
         placeholder="email"
         type="email"
-        label="email"
         aria-label="email"
         name="email"
         variant="outlined"
@@ -50,6 +48,8 @@ const Signup: React.FC<object> = function (): React.ReactNode {
         helperText={touched.email && errors.email}
       />
       <TextField
+        onChange={handleChange}
+        onBlur={handleBlur}
         placeholder="password"
         role="textbox"
         type="password"
@@ -62,6 +62,8 @@ const Signup: React.FC<object> = function (): React.ReactNode {
         helperText={touched.password && errors.password}
       />
       <TextField
+        onChange={handleChange}
+        onBlur={handleBlur}
         placeholder="confirm password"
         type="password"
         aria-label="confirm password"

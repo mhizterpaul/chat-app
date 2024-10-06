@@ -9,33 +9,33 @@ import Login from "@components/login";
 import Signup from "@components/signUp";
 
 export default function Auth() {
-  const [value, setValue] = React.useState(0);
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const [value, setValue] = React.useState("0");
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
 
   return (
-    <Container maxWidth="lg" className="mx-10 my-14 shadow-lg ">
+    <Container maxWidth="lg" className="my-14 shadow-lg ">
       <h1 className="font-extrabold ">Welcome ✌️</h1>
       <p className="font-semibold ">
         fill in the details to get started with the best chat app!
       </p>
-      <Box sx={{ width: "100%" }}>
-        <TabContext value={value}>
+      <TabContext value={value}>
+        <Box sx={{ width: "100%" }}>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <TabList onChange={handleChange}>
-              <Tab label="Login" />
-              <Tab label="Signup" />
+            <TabList centered onChange={handleChange}>
+              <Tab label="Signup" aria-label="Signup" value={"0"} />
+              <Tab label="Login" aria-label="Login" value={"1"} />
             </TabList>
-            <TabPanel value={String(value)}>
-              <Login />
-            </TabPanel>
-            <TabPanel value={String(value)}>
-              <Signup />
-            </TabPanel>
           </Box>
-        </TabContext>
-      </Box>
+          <TabPanel value={"0"}>
+            <Signup />
+          </TabPanel>
+          <TabPanel value={"1"}>
+            <Login />
+          </TabPanel>
+        </Box>
+      </TabContext>
     </Container>
   );
 }
