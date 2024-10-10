@@ -11,6 +11,10 @@ export const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Password is Required."],
   },
+  firstName: {
+    type: String, 
+    required: false,
+  },
   lastName: {
     type: String,
     required: false,
