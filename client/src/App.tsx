@@ -1,10 +1,9 @@
 import React from "react";
-import "./App.css";
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import { lazy } from "react";
 import Auth from "./pages/auth";
 const Chat = lazy(() => import("./pages/chat"));
-const Profile = lazy(() => import("./pages/profile"));
+const Profile = lazy(() => import("./pages/settings"));
 
 function App() {
   return (

@@ -1,7 +1,7 @@
 import React from "react";
 import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import Signup from ".";
+import Signup from "../pages/signUp/signup";
 
 describe("Signup", () => {
   test("renders a signUp form on load", () => {
