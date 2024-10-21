@@ -1,21 +1,17 @@
 import * as React from "react";
 import { Box, TextField, Button } from "@mui/material";
 import { useFormik } from "formik";
-import { useSelector } from "react-redux";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import validationSchema from "../../../../shared/login.schema";
-//use redux to manage state
 
 const Login: React.FC = function () {
-  const model = useSelector((data) => data.user);
-  const controller = useController();
-  const { values, isValid, dirty } = useFormik({
+  const { values, isValid, dirty, handleSubmit } = useFormik({
     initialValues: {
       email: "",
       password: "",
     },
     validationSchema: toFormikValidationSchema(validationSchema),
-    onSubmit: (values) => controller.login(values),
+    onSubmit: (values) => console.log(values),
   });
   return (
     <Box component="form" aria-label="Login" noValidate onSubmit={handleSubmit}>

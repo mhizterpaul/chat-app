@@ -84,10 +84,10 @@ function Profile() {
             <Typography
               gutterBottom
               variant="h6"
-              className=" text-center "
+              className=" text-center capitalize "
               component="div"
             >
-              David
+              Kevin Backer
             </Typography>
             <Typography variant="body2" sx={{ color: "text.secondary" }}>
               kevin.backer188593@gmail.com
@@ -143,7 +143,6 @@ function Profile() {
             <Typography variant="body1">Language</Typography>
 
             <Box sx={stackItemStyle}>
-              {" "}
               <Typography variant="body2" sx={{ color: "text.secondary" }}>
                 English
               </Typography>

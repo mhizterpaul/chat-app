@@ -1,4 +1,8 @@
-export default function IcRoundModeEditOutline(props: SVGProps<SVGSVGElement>) {
+import React from "react";
+
+export default function IcRoundModeEditOutline(
+  props: React.SVGProps<SVGSVGElement>
+) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

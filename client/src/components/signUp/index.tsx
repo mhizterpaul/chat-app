@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import { useFormik } from "formik";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import validationSchema from "../../../shared/signup.schema";
+import validationSchema from "../../../../shared/signup.schema";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 
 const Signup: React.FC<object> = function (): React.ReactNode {
@@ -30,7 +30,6 @@ const Signup: React.FC<object> = function (): React.ReactNode {
   return (
     <Box
       component="form"
-      //sx={{ "& .MuiTextField-root": { m: 1, width: "25ch" } }}
       onSubmit={handleSubmit}
       noValidate
       aria-label="signup"
