@@ -8,6 +8,7 @@ import {
   MenuList,
   ListItemText,
   Avatar,
+  Button,
   Checkbox,
   Container,
 } from "@mui/material";
@@ -61,7 +62,10 @@ function SelectMembers() {
           value={"some value"}
           onChange={() => {}}
         />
-        <MenuList onClick={handleChange} className=" mt-6 ">
+        <MenuList
+          onClick={handleChange}
+          className=" mt-6 overflow-y-scroll overflow-x-hidden"
+        >
           {names.map((name) => (
             <MenuItem
               key={name}
@@ -75,6 +79,9 @@ function SelectMembers() {
                 sx={{
                   marginRight: "1.25rem",
                 }}
+                className={`${
+                  personName.includes(name) ? "ring-1 ring-[#4ab6f7]" : ""
+                }`}
               />
               <ListItemText
                 primary={name}
@@ -84,6 +91,7 @@ function SelectMembers() {
             </MenuItem>
           ))}
         </MenuList>
+        <Button size="large">Add {personName.length} Members</Button>
       </Container>
     </>
   );

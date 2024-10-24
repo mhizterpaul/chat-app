@@ -1,5 +1,5 @@
 import request from "supertest";
-import app from "../routes";
+import app from "..";
 import { db } from "../db/openConnection";
 
 describe("POST /user/signup", () => {
