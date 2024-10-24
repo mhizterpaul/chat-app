@@ -256,6 +256,17 @@ export async function removeProfileImage(
     return;
   }
 }
+
+export async function logout(request: Request, response: Response) {
+  try {
+    response.cookie("jwt", "", { maxAge: 1, secure: true, sameSite: "none" });
+    response.status(200).json({ message: "logout successful" });
+  } catch (e) {
+    console.log(e);
+    response.status(500).json({ message: "something unexpected happened" });
+    return;
+  }
+}
 export default {
   signup,
   login,
@@ -263,4 +274,5 @@ export default {
   addProfileImage,
   removeProfileImage,
   updateProfile,
+  logout,
 };

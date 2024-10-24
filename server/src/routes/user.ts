@@ -1,11 +1,11 @@
 import { Router } from "express";
-import User from "../controllers/user";
+import User from "../controllers/users";
 import verifyToken from "../middleware/verifyToken";
 import multer from "multer";
 
 const router = Router();
 // Store files in memory
-const upload = multer({ storage: multer.memoryStorage() });
+export const upload = multer({ storage: multer.memoryStorage() });
 
 router.post("/signup", User.signup);
 
@@ -22,6 +22,7 @@ router.post(
   User.addProfileImage
 );
 
+router.post("/logout", User.logout);
 router.delete("/remove-profile-image", verifyToken, User.removeProfileImage);
 
 export default router;

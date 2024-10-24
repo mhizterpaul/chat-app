@@ -1,6 +1,6 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction, response } from "express";
-import { RequestWithId } from "../controllers/user";
+import { RequestWithId } from "../controllers/users";
 
 const crypto = require("crypto");
 const { KEY, IV, ALGORITHM, JWT_KEY } = process.env;
