@@ -66,30 +66,6 @@ export const login = async function (
 ) {
   const { email, password } = req.body;
   try {
-    if (req.cookies.jwt) {
-      const decipher = crypto.createDecipheriv(ALGORITHM, KEY, IV);
-      let decryptedToken = decipher.update(req.cookies.jwt, "hex", "utf8");
-      decryptedToken += decipher.final("utf8");
-      const { email } = jwt.decode(decryptedToken) as { email: string };
-      const user = await Users.findOne({ email });
-      if (!user) {
-        res.status(404).json({
-          message: "user not found",
-        });
-        return;
-      }
-      res.status(200).json({
-        user: {
-          id: user.id,
-          email: user.email,
-          profileSetup: user.profileSetup,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          image: user.image,
-        },
-      });
-    }
-    //validate login body
     loginSchema.parse({ email, password });
     //check if user exists
     const user = await Users.findOne({ email });

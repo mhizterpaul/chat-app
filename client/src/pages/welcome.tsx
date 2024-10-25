@@ -1,29 +1,65 @@
-import { Container, Box } from "@mui/material/";
+import { Container, Typography, Box } from "@mui/material/";
 import * as React from "react";
 import Logo from "../components/ui/logo";
-const Welcome = function () {
-  const outline = `outline-1 outline-gray-300 rounded-full min-w-96`;
+import theme from "../theme";
+import { useNavigate } from "react-router-dom";
+
+export default function Welcome() {
+  const outline = ` flex flex-col place-items-center justify-center border-gray-400 border-opacity-75  rounded-full min-w-96 `;
+  const navigate = useNavigate();
+  setTimeout(() => navigate("/sign-on"), 4500);
+
   return (
     <>
-      <Container className=" overflow-hidden ">
-        <div className={outline + "w-[calc(100vw+6rem)]"}>
-          <div className={outline + "w-[calc(100vw+10rem)]"}>
+      <Container
+        className=" flex flex-col place-items-center overflow-hidden h-screen"
+        sx={{ backgroundColor: "secondary.main" }}
+      >
+        <div
+          className={
+            outline +
+            " my-auto border-[1px] h-[calc(100vh-1rem)] w-[calc(100vh-1rem)] ripple "
+          }
+        >
+          <div
+            className={outline + " border-2 h-[calc(83.5vh)] w-[calc(83.5vh)] "}
+          >
             <div
               className={
-                outline + "w-[calc(100vw+14rem)] flex flex-col gap-y-4"
+                outline +
+                " border-[3px] h-[calc(72.5vh)] w-[calc(72.5vh)] unripple "
               }
             >
-              <Box className={"rounded-lg"}>
-                <Logo className={" p-8 "} />
+              <Box className="relative flex">
+                <Logo
+                  style={{
+                    color: theme.palette.primary.main,
+                    backgroundColor: "white",
+                    width: "8rem",
+                    height: "8rem",
+                    padding: "2rem",
+                    borderRadius: "2rem",
+                    marginBottom: "1rem",
+                  }}
+                />
+                <span className="absolute inline-flex top-[2.325rem] right-[2.325rem] h-4 w-4 rounded-full bg-sky-400 opacity-75"></span>
               </Box>
-              <span className=" inline-block ">Chat</span>
-              <span className=" inline-block ">Freedcamp</span>
+              <Typography
+                variant="h3"
+                className="text-white inline-block mb-1 font-bold"
+              >
+                Chat
+              </Typography>
+              <Typography
+                variant="body2"
+                className=" text-white inline-block opacity-75"
+              >
+                Freecamp
+              </Typography>
             </div>
           </div>
         </div>
       </Container>
     </>
   );
-};
-
-export default Welcome;
+}

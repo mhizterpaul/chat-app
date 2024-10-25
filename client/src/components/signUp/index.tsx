@@ -6,6 +6,9 @@ import Button from "@mui/material/Button";
 import validationSchema from "../../../../shared/signup.schema";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 
+export const customStyle = {
+  width: "21rem",
+};
 const Signup: React.FC<object> = function (): React.ReactNode {
   const {
     handleChange,
@@ -33,6 +36,7 @@ const Signup: React.FC<object> = function (): React.ReactNode {
       onSubmit={handleSubmit}
       noValidate
       aria-label="signup"
+      className="flex flex-col gap-y-6 place-items-center "
     >
       <TextField
         onChange={handleChange}
@@ -42,6 +46,7 @@ const Signup: React.FC<object> = function (): React.ReactNode {
         aria-label="email"
         name="email"
         variant="outlined"
+        sx={customStyle}
         value={values.email}
         error={touched.email && Boolean(errors.email)}
         helperText={touched.email && errors.email}
@@ -55,6 +60,7 @@ const Signup: React.FC<object> = function (): React.ReactNode {
         aria-label="password"
         autoComplete="current-password"
         variant="outlined"
+        sx={customStyle}
         name="password"
         value={values.password}
         error={touched.password && Boolean(errors.password)}
@@ -67,6 +73,7 @@ const Signup: React.FC<object> = function (): React.ReactNode {
         type="password"
         aria-label="confirm password"
         role="textbox"
+        sx={customStyle}
         name="confirmPassword"
         autoComplete="current-password"
         variant="outlined"
@@ -80,6 +87,7 @@ const Signup: React.FC<object> = function (): React.ReactNode {
         disabled={(!isValid && dirty) || !dirty}
         aria-label="submit"
         className="text-white "
+        size="large"
       >
         Signup
       </Button>

@@ -23,7 +23,6 @@ import {
   Typography,
   CardMedia,
 } from "@mui/material";
-import { drawerBleeding } from "../components/swipableDrawer";
 import { useFormik } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 

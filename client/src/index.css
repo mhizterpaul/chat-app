@@ -10,3 +10,30 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.ripple {
+  animation: ripple 1.5s ease-in infinite;
+}
+.unripple {
+  animation: unripple 1.5s linear infinite;
+}
+
+@keyframes ripple {
+  from {
+    transform: scale3d(0.95, 0.95, 1);
+  }
+
+  to {
+    transform: scale3d(1.12, 1.12, 1);
+  }
+}
+
+@keyframes unripple {
+  from {
+    transform: scale3d(1.05, 1.05, 1);
+  }
+
+  to {
+    transform: scale3d(0.88, 0.88, 1);
+  }
+}
