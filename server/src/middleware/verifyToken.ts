@@ -1,14 +1,16 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { Request, Response, NextFunction, response } from "express";
+import { Response, NextFunction } from "express";
 import { RequestWithId } from "../controllers/users";
 
 const crypto = require("crypto");
-const { KEY, IV, ALGORITHM, JWT_KEY } = process.env;
+const { ALGORITHM, JWT_KEY } = process.env;
+const KEY = crypto.randomBytes(32);
+const IV = crypto.randomBytes(16);
 const decipher = crypto.createDecipheriv(ALGORITHM, KEY, IV);
 
 export default function verifyToken(
   request: RequestWithId,
-  reponse: Response,
+  response: Response,
   next: NextFunction
 ) {
   const token = request.cookies.jwt;

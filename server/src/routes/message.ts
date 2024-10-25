@@ -1,7 +1,7 @@
 import { Router } from "express";
 import verifyToken from "../middleware/verifyToken";
 import Messages from "../controllers/messages";
-import { upload } from "../routes/user";
+import { upload } from "./user";
 
 const router = Router();
 
@@ -12,3 +12,5 @@ router.post(
   upload.single("single"),
   Messages.uploadFile
 );
+
+export default router;

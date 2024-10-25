@@ -1,5 +1,5 @@
 import { Response } from "express";
-import Messages from "../db/models/messages";
+import Messages from "../models/messages";
 import { RequestWithId } from "./users";
 import { Storage } from "megajs";
 

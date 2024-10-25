@@ -11,3 +11,5 @@ router.get(
   verifyToken,
   Channels.getChannelMessages
 );
+
+export default router;

@@ -1,7 +1,7 @@
 import { Server as SocketIOServer, Socket } from "socket.io";
-import Messages from "./db/models/messages";
+import Messages from "./models/messages";
 import { Types, Document } from "mongoose";
-import Channels from "./db/models/channels";
+import Channels from "./models/channels";
 
 interface IMessage extends Document {
   sender: Types.ObjectId;

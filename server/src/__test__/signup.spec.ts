@@ -1,6 +1,6 @@
 import request from "supertest";
 import app from "..";
-import { db } from "../db/openConnection";
+import { db } from "../config";
 
 describe("POST /user/signup", () => {
   afterAll(async () => {

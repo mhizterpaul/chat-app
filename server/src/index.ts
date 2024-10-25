@@ -1,13 +1,14 @@
 import express from "express";
-require("dontenv").config();
+require("dotenv").config();
 const socket = require("socket.io");
 const cors = require("cors");
 import cookieParser from "cookie-parser";
-import openDatabaseConnection from "./db/openConnection";
+import openDatabaseConnection from "./config";
 import setUpSocket from "./socket";
+import Routes from "./routes";
 
 const app = express();
-const port = process.env.PORT||3000;
+const port = process.env.PORT || 3000;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -16,6 +17,11 @@ app.use(cookieParser());
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
+
+app.use("/api/channel", Routes.channelRoute);
+app.use("/api/contacts", Routes.contactRoute);
+app.use("/api/messages", Routes.messageRoute);
+app.use("/api/user", Routes.userRoute);
 
 const server = app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

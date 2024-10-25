@@ -3,12 +3,10 @@ import Box from "@mui/material/Box";
 import { useFormik } from "formik";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import validationSchema from "../../../../shared/signup.schema";
+import validationSchema from "../../../../shared/schemas/signup";
 import { toFormikValidationSchema } from "zod-formik-adapter";
+import { customStyle } from "../../utils/constants";
 
-export const customStyle = {
-  width: "21rem",
-};
 const Signup: React.FC<object> = function (): React.ReactNode {
   const {
     handleChange,

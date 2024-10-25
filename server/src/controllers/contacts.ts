@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { RequestWithId } from "./users";
-import Users from "../db/models/users";
-import Messages from "../db/models/messages";
+import Users from "../models/users";
+import Messages from "../models/messages";
 import mongoose, { Types } from "mongoose";
 
 export async function searchContacts(

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction, response } from "express";
-import loginSchema from "../../../shared/login.schema";
-import signupSchema from "../../../shared/signup.schema";
-import Users from "../db/models/users";
+import loginSchema from "../../../shared/schemas/login";
+import signupSchema from "../../../shared/schemas/signup";
+import Users from "../models/users";
 import jwt from "jsonwebtoken";
 import z from "../../../shared/node_modules/zod";
 import { Storage } from "megajs";
@@ -10,10 +10,11 @@ export interface RequestWithId extends Request {
   userId?: string;
 }
 
-const crypto = require("cryto");
+const crypto = require("crypto");
 const maxAge = 3 * 24 * 24 * 60 * 60 * 1000;
-const { KEY, IV, ALGORITHM, JWT_KEY, MEGA_USERNAME, MEGA_PASSWORD } =
-  process.env;
+const { ALGORITHM, JWT_KEY, MEGA_USERNAME, MEGA_PASSWORD } = process.env;
+const KEY = crypto.randomBytes(32);
+const IV = crypto.randomBytes(16);
 const createToken = (email: string, userId: string) => {
   const text = jwt.sign({ email, userId }, JWT_KEY || "", {
     expiresIn: maxAge,

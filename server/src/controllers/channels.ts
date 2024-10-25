@@ -1,5 +1,5 @@
-import Channels from "../db/models/channels";
-import Users from "../db/models/users";
+import Channels from "../models/channels";
+import Users from "../models/users";
 import { RequestWithId } from "./users";
 import { Response } from "express";
 import mongoose from "mongoose";

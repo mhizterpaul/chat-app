@@ -2,8 +2,8 @@ import * as React from "react";
 import { Box, TextField, Button } from "@mui/material";
 import { useFormik } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import validationSchema from "../../../../shared/login.schema";
-import { customStyle } from "../signup";
+import validationSchema from "../../../../shared/schemas/login";
+import { customStyle } from "../../utils/constants";
 
 const Login: React.FC = function () {
   const { values, isValid, dirty, handleSubmit, handleChange, handleBlur } =

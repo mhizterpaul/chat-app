@@ -11,8 +11,8 @@ import {
   SvgIcon,
   ListItemText,
 } from "@mui/material";
+import {drawerBleeding} from "../utils/constants"
 
-export const drawerBleeding = 56;
 
 type Props = {
   container: HTMLDivElement;

@@ -1,17 +1,22 @@
 {
   "compilerOptions": {
     "jsx": "react",
-    "types": ["@testing-library/jest-dom"],
+    "types": ["@testing-library/jest-dom", "node"],
     "esModuleInterop": true,
-    "baseUrl": "./src",
+    "rootDir": "../",
+    "baseUrl": "src",
     "paths": {
-      "@components/*": ["components/*"],
-      "@utils/*": ["utils/*"]
+      "@components/*": ["./components/*"],
+      "@shared/*": ["../../shared/*"],
+      "@pages/*": ["./pages/*"],
+      "@store/*": ["./store/*"],
+      "@utils/*": ["./utils/*"]
     }
   },
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ]
+  ],
+  "exclude": ["node_modules"]
 }
