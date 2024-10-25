@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "../../../../shared/node_modules/zod";
 
 export default z.object({
   email: z
