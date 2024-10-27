@@ -19,7 +19,7 @@ function Chat() {
         name="development"
         secondary={"12 members"}
       />
-      <Container sx={{width: { sm: `calc(100% - ${drawerWidth}px)` }}}>
+      <Container sx={{ width: { sm: `calc(100% - ${drawerWidth}px)` } }}>
         <Box>
           <IconButton></IconButton>
           <TextField

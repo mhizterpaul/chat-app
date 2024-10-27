@@ -1,12 +1,12 @@
 import { Container, Typography, Box } from "@mui/material/";
-import * as React from "react";
-import Logo from "../components/ui/logo";
+import Logo from "../components/ui/logoIcon";
 import theme from "../theme";
 import { useNavigate } from "react-router-dom";
 
 export default function Welcome() {
-  const outline = ` flex flex-col place-items-center justify-center border-gray-400 border-opacity-75  rounded-full min-w-96 `;
   const navigate = useNavigate();
+  const outline = ` flex flex-col place-items-center justify-center border-gray-400 border-opacity-75  rounded-full min-w-96 `;
+  //Redirect
   setTimeout(() => navigate("/sign-on"), 4500);
 
   return (

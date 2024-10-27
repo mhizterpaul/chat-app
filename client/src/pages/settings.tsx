@@ -12,7 +12,7 @@ import {
   Switch,
 } from "@mui/material";
 import avatar from "../assets/avatar2.jpg";
-import EditIcon from "../components/ui/edit.tsx";
+import EditIcon from "../components/ui/editIcon.tsx";
 import NavBar from "../components/navbar";
 import BottomNavigation from "../components/bottomNavigation";
 import { MdKeyboardArrowRight } from "react-icons/md";
@@ -20,24 +20,25 @@ import * as React from "react";
 import { IoMdTime } from "react-icons/io";
 import { RiFontSize2 } from "react-icons/ri";
 
+const stackItemStyle = {
+  marginLeft: "auto",
+  textWrap: "nowrap",
+  "& > *": {
+    display: "inline-block",
+  },
+  "&>p": {
+    textAlign: "end",
+    verticalAlign: "middle",
+    width: {
+      xs: "130px",
+      sm: "fit-content",
+    },
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  },
+};
+
 function Profile() {
-  const stackItemStyle = {
-    marginLeft: "auto",
-    textWrap: "nowrap",
-    "& > *": {
-      display: "inline-block",
-    },
-    "&>p": {
-      textAlign: "end",
-      verticalAlign: "middle",
-      width: {
-        xs: "130px",
-        sm: "fit-content",
-      },
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-    },
-  };
   return (
     <>
       <NavBar name="settings" />
@@ -179,6 +180,7 @@ function Profile() {
             <Typography variant="body2">Dark Mode </Typography>
             <Switch className="ml-auto" />
           </Box>
+          <Button>Update</Button>
         </Stack>
       </Container>
       <BottomNavigation />

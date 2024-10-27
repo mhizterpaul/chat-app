@@ -3,6 +3,8 @@ import { IoKeyOutline } from "react-icons/io5";
 import { PiSquaresFourLight } from "react-icons/pi";
 import * as React from "react";
 import { theme } from "../../theme";
+
+import { User } from "../../store/slices/user/types";
 import {
   Box,
   Typography,
@@ -16,21 +18,28 @@ import {
   OutlinedInput,
   Menu,
 } from "@mui/material";
+import action from "../../store/slices/user/actions";
 import avatar from "../../assets/avatar2.jpg";
 import { useFormik } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import validationSchema from "./schema";
 import { HiOutlineEnvelope } from "react-icons/hi2";
-import {
-  names,
-  MenuProps,
-} from "../../utils/constants";
+import { names, MenuProps } from "../../utils/constants";
+import { useAppSelector, useAppDispatch } from "../../store/hooks";
+import { RootState } from "../../store";
+import { useNavigate } from "react-router-dom";
 
 export default function EditProfile() {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const selector = (state: RootState) => state.account;
+  const account = useAppSelector(selector);
+
+  //Route Guard
+  if (!account.user) navigate("sign-on");
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
-
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -58,7 +67,21 @@ export default function EditProfile() {
       homepage: "Homepage",
     },
     validationSchema: toFormikValidationSchema(validationSchema),
-    onSubmit: (values) => console.log(values),
+    onSubmit: (values, { resetForm }) => {
+      const User = account.user as User;
+      const Values = Object(values);
+      const name = Values.name.split(",");
+      delete Values["name"];
+      dispatch(
+        action.updateProfile({
+          firstName: name[0],
+          lastName: name[1],
+          ...User,
+          ...Values,
+        })
+      );
+      if (account.user.loading === "succeeded") resetForm({ values });
+    },
   });
 
   return (
@@ -168,7 +191,7 @@ export default function EditProfile() {
               },
             }}
             required
-            placeholder="Name"
+            placeholder="firstName lastName"
             label="Name"
             type="name"
             name="name"
@@ -236,7 +259,9 @@ export default function EditProfile() {
             ))}
           </Select>
           <Button
-            disabled={(!isValid && dirty) || !dirty}
+            disabled={
+              (!isValid && dirty) || !dirty || account.loading === "pending"
+            }
             type="submit"
             aria-label="submit"
             size="large"

@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./slices/user";
+import chatsReducer from "./slices/chats";
 
 export const store = configureStore({
   reducer: {
-    user: userReducer,
+    account: userReducer,
+    chats: chatsReducer,
   },
 });
 export type RootState = ReturnType<typeof store.getState>;

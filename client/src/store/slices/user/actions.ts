@@ -13,11 +13,12 @@ const signup = createAsyncThunk("user/signup", async (userInfo: SignupInfo) => {
 
 const updateProfile = createAsyncThunk(
   "user/updateProfile",
-  async (userInfo: SignupInfo) => {
+  async (userInfo: User & { password: string }) => {
     const response = await axios.post(API + "/update-profile", userInfo, {
       headers: {
         "Content-Type": "application/json",
       },
+      withCredentials: true,
     });
     return response.data;
   }
