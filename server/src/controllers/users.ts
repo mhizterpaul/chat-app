@@ -103,8 +103,10 @@ export const login = async function (
   }
 };
 export async function getUserInfo(request: RequestWithId, response: Response) {
+  const { id } = request.body;
+  const { userId } = request;
   try {
-    const userData = await Users.findById(request.userId);
+    const userData = await Users.findById(id || userId);
     if (!userData) {
       response.status(404).json({ message: "user with given id not found" });
       return;

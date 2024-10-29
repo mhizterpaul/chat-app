@@ -1,10 +1,16 @@
 import * as React from "react";
 import { Box, BottomNavigation, BottomNavigationAction } from "@mui/material";
 import ProfileIcon from "../components/ui/profileIcon";
-
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { setActivePage } from "../store/slices/user/actions";
+import { RootState } from "../store";
+import { useNavigate } from "react-router-dom";
 export default function SimpleBottomNavigation() {
-  const [value, setValue] = React.useState(0);
-
+  const selector = (state: RootState) => state.account.activePage;
+  const activePage = useAppSelector(selector);
+  const [value, setValue] = React.useState(activePage.name);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   return (
     <Box sx={{ marginTop: "2.5rem" }}>
       <BottomNavigation
@@ -12,11 +18,14 @@ export default function SimpleBottomNavigation() {
         value={value}
         onChange={(event, newValue) => {
           setValue(newValue);
+          dispatch(setActivePage({ name: newValue }));
+          navigate("/" + newValue);
         }}
         className=" relative flex content-between "
       >
         <BottomNavigationAction
           label="Conversations"
+          value="chats"
           icon={
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -63,8 +72,13 @@ export default function SimpleBottomNavigation() {
               />
             </svg>
           }
+          value="new-chat"
         />
-        <BottomNavigationAction label="Profile" icon={<ProfileIcon />} />
+        <BottomNavigationAction
+          value="settings"
+          label="Profile"
+          icon={<ProfileIcon />}
+        />
       </BottomNavigation>
     </Box>
   );

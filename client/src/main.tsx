@@ -4,12 +4,15 @@ import { StyledEngineProvider, ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";
 import App from "./App.tsx";
 import "./index.css";
+import SocketProvider from "./context/socket";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
-        <App/>
+        <SocketProvider>
+          <App />
+        </SocketProvider>
       </ThemeProvider>
     </StyledEngineProvider>
   </StrictMode>

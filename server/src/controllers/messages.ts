@@ -43,11 +43,11 @@ export async function uploadFile(request: RequestWithId, response: Response) {
       size: file.size,
     });
     uploadStream.end(file.buffer);
-    let link;
+    let data = { filePath: "" };
     uploadStream.on("complete", async (file) => {
-      link = await file.link({ noKey: true });
+      data.filePath = await file.link({ noKey: true });
     });
-    response.status(200).json({ filePath: link });
+    response.status(200).json(data);
     return;
   } catch (e) {
     console.log(e);

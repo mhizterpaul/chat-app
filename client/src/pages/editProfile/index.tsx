@@ -1,10 +1,7 @@
-import NavBar from "../../components/navbar";
 import { IoKeyOutline } from "react-icons/io5";
 import { PiSquaresFourLight } from "react-icons/pi";
 import * as React from "react";
 import { theme } from "../../theme";
-
-import { User } from "../../store/slices/user/types";
 import {
   Box,
   Typography,
@@ -28,6 +25,7 @@ import { names, MenuProps } from "../../utils/constants";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { RootState } from "../../store";
 import { useNavigate } from "react-router-dom";
+import { User } from "../../store/slices/user/types";
 
 export default function EditProfile() {
   const navigate = useNavigate();
@@ -68,7 +66,7 @@ export default function EditProfile() {
     },
     validationSchema: toFormikValidationSchema(validationSchema),
     onSubmit: (values, { resetForm }) => {
-      const User = account.user as User;
+      const _user = account.user as User;
       const Values = Object(values);
       const name = Values.name.split(",");
       delete Values["name"];
@@ -76,17 +74,16 @@ export default function EditProfile() {
         action.updateProfile({
           firstName: name[0],
           lastName: name[1],
-          ...User,
+          ..._user,
           ...Values,
         })
       );
-      if (account.user.loading === "succeeded") resetForm({ values });
+      if (account.loading === "succeeded") resetForm({ values });
     },
   });
 
   return (
     <>
-      <NavBar name="edit profile" />
       <Container className=" flex flex-col px-8 place-items-center justify-between w-full gap-y-6 mt-6 ">
         <Box
           sx={{ maxHeight: 250, height: "33vh", width: "100%", maxWidth: 576 }}

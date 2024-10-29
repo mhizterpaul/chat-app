@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 type SignupInfo = {
   email: string;
   password: string;
@@ -14,4 +16,10 @@ interface User {
 
 interface ApiError {
   message: string;
+}
+
+interface IActivePage {
+  name: string;
+  description?: string;
+  icon?: ReactNode | null;
 }

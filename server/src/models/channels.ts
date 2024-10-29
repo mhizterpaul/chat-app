@@ -10,6 +10,10 @@ const channelSchema = new mongoose.Schema({
   messages: [
     { type: mongoose.Schema.ObjectId, ref: "Messages", required: false },
   ],
+  avatar: {
+    type: String,
+    required: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now(),

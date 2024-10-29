@@ -5,16 +5,29 @@ import { PiDotsThreeBold } from "react-icons/pi";
 import { LiaTimesSolid } from "react-icons/lia";
 import { drawerWidth } from "./drawer";
 import Drawer from "./drawer";
-type props = {
-  name: string;
-  icon?: React.ReactNode;
-  secondary?: string;
+import { useAppSelector } from "../store/hooks";
+import { RootState } from "../store";
+import { useNavigate } from "react-router-dom";
+
+type Props = {
+  children: React.ReactNode;
 };
 
-export default function Navbar({ name, icon, secondary }: props) {
+const titleMap: { [key: string]: string } = {
+  profile: "edit profile",
+  settings: "profile and settings",
+  "new-chat": "create a new conversation",
+  channelContacts: "select Members",
+  privateContacts: "select Contact",
+};
+
+export default function Navbar({ children }: Props) {
   const [isClosing, setIsClosing] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const navbarRef = React.useRef<HTMLDivElement>(null);
+  const selector = (state: RootState) => state.account.activePage;
+  const { name, description, icon } = useAppSelector(selector);
+  const navigate = useNavigate();
   const handleDrawerToggle = () => {
     if (!isClosing) {
       setMobileOpen(!mobileOpen);
@@ -41,16 +54,16 @@ export default function Navbar({ name, icon, secondary }: props) {
         }}
       >
         <Toolbar sx={{ justifyContent: "space-between" }}>
-          <IconButton>
+          <IconButton onClick={() => navigate(-1)}>
             <IoIosArrowRoundBack />
           </IconButton>
           <Box className="flex place-items-center ">
-            {icon}{" "}
+            {icon}
             <Typography className=" capitalize text-nowrap " variant="h4">
-              {name}\n
-              {secondary ? (
+              {titleMap[name] || name}\n
+              {description ? (
                 <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                  {secondary}
+                  {description}
                 </Typography>
               ) : null}
             </Typography>
@@ -58,28 +71,28 @@ export default function Navbar({ name, icon, secondary }: props) {
           {[1].map(() => {
             let icon: React.ReactNode | null = null;
             switch (name) {
-              case "chat":
-                icon = <IoIosMenu />;
-                return (
-                  <IconButton
-                    size="large"
-                    aria-label="open drawer"
-                    edge="end"
-                    onClick={handleDrawerToggle}
-                    sx={{
-                      mr: 2,
-                      color: "text.secondary",
-                      display: { sm: "none" },
-                    }}
-                  >
-                    {icon}
-                  </IconButton>
-                );
               case "settings":
                 icon = <PiDotsThreeBold />;
                 break;
-              case "create a new conversation":
+              case "new-chat":
                 icon = <LiaTimesSolid />;
+            }
+            if (description) {
+              return (
+                <IconButton
+                  size="large"
+                  aria-label="open drawer"
+                  edge="end"
+                  onClick={handleDrawerToggle}
+                  sx={{
+                    mr: 2,
+                    color: "text.secondary",
+                    display: { sm: "none" },
+                  }}
+                >
+                  <IoIosMenu />
+                </IconButton>
+              );
             }
             return icon ? (
               <IconButton
@@ -102,6 +115,7 @@ export default function Navbar({ name, icon, secondary }: props) {
         handleDrawerClose={handleDrawerClose}
         container={navbarRef.current ? navbarRef.current.parentElement : null}
       />
+      {children}
     </>
   );
 }

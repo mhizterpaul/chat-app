@@ -13,7 +13,6 @@ import {
 } from "@mui/material";
 import avatar from "../assets/avatar2.jpg";
 import EditIcon from "../components/ui/editIcon.tsx";
-import NavBar from "../components/navbar";
 import BottomNavigation from "../components/bottomNavigation";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import * as React from "react";
@@ -41,7 +40,6 @@ const stackItemStyle = {
 function Profile() {
   return (
     <>
-      <NavBar name="settings" />
       <Container
         className=" mx-auto pt-8 "
         sx={{

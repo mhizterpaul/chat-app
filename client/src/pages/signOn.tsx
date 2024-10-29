@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Box, Tab, Container, Typography, SvgIcon } from "@mui/material";
 import { TabPanel, TabContext, TabList } from "@mui/lab";
-import { useSelector } from "react-redux";
+import { useAppSelector } from "../store/hooks";
 import { RootState } from "../store";
 import Login from "../components/login";
 import Signup from "../components/signup";
@@ -10,12 +10,13 @@ import victoryIcon from "../assets/victory.svg";
 
 export default function SignOn() {
   const selector = (state: RootState) => state.account.user;
-  const user = useSelector(selector);
+  const user = useAppSelector(selector);
   const navigate = useNavigate();
 
   //Conditional Redirect
-  if (user) navigate("/chats");
-
+  if (user) {
+    navigate("/chats");
+  }
   const [value, setValue] = React.useState("0");
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);

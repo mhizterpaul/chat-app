@@ -1,15 +1,23 @@
 import { createSlice, isAnyOf } from "@reduxjs/toolkit";
 import actions from "./actions";
+import { User, ApiError, IActivePage } from "./types";
+
 interface UserState {
   user: User | null;
   error: ApiError | null;
   loading: "idle" | "pending" | "succeeded" | "failed";
+  activePage: IActivePage;
 }
 
 const initialState = {
   user: null,
   error: null,
   loading: "idle",
+  activePage: {
+    name: "",
+    description: "",
+    icon: null,
+  },
 } as UserState;
 
 // Then, handle actions in your reducers:
@@ -17,7 +25,10 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    // standard reducer logic, with auto-generated action types per reducer
+    setActivePage: (state, { type, payload }) => {
+      if (type !== "setActivePage") return;
+      state.activePage = payload;
+    },
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
@@ -27,7 +38,8 @@ const userSlice = createSlice({
           actions.signup.pending,
           actions.login.pending,
           actions.logout.pending,
-          actions.updateProfile.pending
+          actions.updateProfile.pending,
+          actions.getUserInfo.pending
         ),
         (state) => {
           state.loading = "pending";
@@ -37,7 +49,8 @@ const userSlice = createSlice({
         isAnyOf(
           actions.signup.fulfilled,
           actions.updateProfile.fulfilled,
-          actions.login.fulfilled
+          actions.login.fulfilled,
+          actions.getUserInfo.fulfilled
         ),
         (state, action) => {
           // Add user to the state array
@@ -50,7 +63,8 @@ const userSlice = createSlice({
         isAnyOf(
           actions.signup.rejected,
           actions.updateProfile.rejected,
-          actions.login.rejected
+          actions.login.rejected,
+          actions.getUserInfo.rejected
         ),
         (state, action) => {
           // Add user to the state array

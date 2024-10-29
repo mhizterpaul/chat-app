@@ -1,20 +1,31 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { IActivePage, SignupInfo, User } from "./types";
 
 const API = process.env.API;
-const signup = createAsyncThunk("user/signup", async (userInfo: SignupInfo) => {
-  const response = await axios.post(API + "/signup", userInfo, {
-    headers: {
-      "Content-Type": "application/json",
-    },
+export const signup = createAsyncThunk(
+  "user/signup",
+  async (userInfo: SignupInfo) => {
+    const response = await axios.post(API + "user/signup", userInfo, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  }
+);
+
+export const getUserInfo = createAsyncThunk("user/userInfo", async () => {
+  const response = await axios.get(API + "user/user-info", {
+    withCredentials: true,
   });
   return response.data;
 });
 
-const updateProfile = createAsyncThunk(
+export const updateProfile = createAsyncThunk(
   "user/updateProfile",
   async (userInfo: User & { password: string }) => {
-    const response = await axios.post(API + "/update-profile", userInfo, {
+    const response = await axios.post(API + "user/update-profile", userInfo, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -24,18 +35,26 @@ const updateProfile = createAsyncThunk(
   }
 );
 
-const login = createAsyncThunk("user/login", async (userInfo: SignupInfo) => {
-  const response = await axios.post(API + "/login", userInfo, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+export const login = createAsyncThunk(
+  "user/login",
+  async (userInfo: SignupInfo) => {
+    const response = await axios.post(API + "user/login", userInfo, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  }
+);
+
+export const logout = createAsyncThunk("user/logout", async () => {
+  const response = await axios.post(API + "/logout");
   return response.data;
 });
 
-const logout = createAsyncThunk("user/logout", async () => {
-  const response = await axios.post(API + "/logout");
-  return response.data;
+export const setActivePage = (payload: IActivePage) => ({
+  type: "setActivePage",
+  payload,
 });
 
 export default {
@@ -43,4 +62,6 @@ export default {
   logout,
   signup,
   updateProfile,
+  getUserInfo,
+  setActivePage,
 };

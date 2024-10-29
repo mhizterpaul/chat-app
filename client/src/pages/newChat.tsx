@@ -1,9 +1,8 @@
 import * as React from "react";
-import NavBar from "../components/navbar";
 import TabPanel from "@mui/lab/TabPanel";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
-import { z } from "zod";
+import { z } from "../../../shared/node_modules/zod";
 import { HiOutlinePlus } from "react-icons/hi2";
 import avatar from "../assets/avatar.png";
 import EditIcon from "../components/ui/editIcon";
@@ -59,7 +58,6 @@ function NewConversation() {
   });
   return (
     <>
-      <NavBar name="create a new conversation" />
       <Container
         ref={containerRef}
         sx={{

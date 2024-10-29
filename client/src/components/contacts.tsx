@@ -1,6 +1,5 @@
 import * as React from "react";
 import { RiSearch2Line } from "react-icons/ri";
-import NavBar from "../components/navbar";
 import {
   TextField,
   InputAdornment,
@@ -15,7 +14,7 @@ import {
 import avatar from "../assets/avatar.png";
 import { names } from "../utils/constants";
 
-function SelectMembers() {
+function SelectMembers({type}) {
   const [personName, setPersonName] = React.useState<string[]>([]);
 
   const handleChange = (event: React.SyntheticEvent) => {
@@ -29,7 +28,6 @@ function SelectMembers() {
   };
   return (
     <>
-      <NavBar name="select members" />
       <Container className=" px-8 mt-8 ">
         <TextField
           fullWidth

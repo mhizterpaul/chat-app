@@ -9,7 +9,7 @@ export async function createChannel(
   response: Response
 ) {
   try {
-    const { name, members } = request.body;
+    const { name, members, avatar } = request.body;
     const userId = request.userId;
 
     const admin = await Users.findById(userId);
@@ -27,6 +27,7 @@ export async function createChannel(
       name,
       members,
       admin: userId,
+      avatar,
     });
     await newChannel.save();
     response.status(201).json({ channel: newChannel });

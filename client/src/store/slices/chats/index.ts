@@ -1,12 +1,14 @@
 import { createSlice, isAnyOf } from "@reduxjs/toolkit";
 import actions from "./actions";
-import { Channel, Contact } from "./types";
+import { Channel, Contact, Message } from "./types";
+import { ApiError } from "../user/types";
 
 interface State {
   channelList: Channel[];
   dmList: Contact[];
   error: { message: string } | null;
   contacts: { label: string }[];
+  messages: (Message & { channelId?: number })[];
   loading: "idle" | "succeeded" | "failed" | "pending";
 }
 const initialState = {
@@ -14,6 +16,7 @@ const initialState = {
   dmList: [],
   error: null,
   contacts: [],
+  messages: [],
   loading: "idle",
 } as State;
 
@@ -21,7 +24,16 @@ const userSlice = createSlice({
   name: "contacts",
   initialState,
   reducers: {
-    // standard reducer logic, with auto-generated action types per reducer
+    addMessage: (state, { type, payload }) => {
+      if (type !== "addMessage") return;
+      state.messages = [...state.messages, payload];
+    },
+    removeMessage: (state, { type, payload }) => {
+      if (type !== "removeMessage") return;
+      state.messages = state.messages.filter(
+        (message: Message) => message.timeStamp !== payload.timeStamp
+      );
+    },
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed

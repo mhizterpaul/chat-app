@@ -82,7 +82,14 @@ export async function getContactsForDmList(
         $project: {
           _id: 1,
           lastMessageTime: 1,
-          email: "$contactInfo.email",
+          firstName: "$contactInfo.firstName",
+          lastName: "$contactInfo.lastName",
+          lastMessage: {
+            messageType: "$lastMessage.messageType",
+            content: "$lastMessage.content",
+            fileUrl: "$lastMessage.fileUrl",
+            timeStamp: "$lastMessage.timestamp",
+          },
           image: "$contactInfo.image",
         },
       },
@@ -113,6 +120,7 @@ export async function getAllContacts(
     );
     const contacts = users.map((user) => ({
       label: user.firstName ? `${user.firstName} ${user.lastName}` : user.email,
+      avatar: user.image,
     }));
     response.status(200).json({ contacts });
     return;

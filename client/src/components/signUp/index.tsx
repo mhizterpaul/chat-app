@@ -6,8 +6,16 @@ import Button from "@mui/material/Button";
 import validationSchema from "../../../../shared/schemas/signup";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { customStyle } from "../../utils/constants";
+import { useAppSelector, useAppDispatch } from "../../store/hooks";
+import { RootState } from "../../store";
+import { signup } from "../../store/slices/user/actions";
+import { useNavigate } from "react-router-dom";
 
-const Signup: React.FC<object> = function (): React.ReactNode {
+export default function Signup(): React.ReactNode {
+  const selector = (state: RootState) => state.account.loading;
+  const loading = useAppSelector(selector);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const {
     handleChange,
     handleBlur,
@@ -24,10 +32,15 @@ const Signup: React.FC<object> = function (): React.ReactNode {
       confirmPassword: "",
     },
     validationSchema: toFormikValidationSchema(validationSchema),
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
-    },
+    onSubmit: (values) =>
+      dispatch(
+        signup({
+          email: values.email,
+          password: values.password,
+        })
+      ),
   });
+  if (loading === "succeeded") navigate("/chats");
   return (
     <Box
       component="form"
@@ -82,7 +95,7 @@ const Signup: React.FC<object> = function (): React.ReactNode {
       <Button
         type="submit"
         variant="contained"
-        disabled={(!isValid && dirty) || !dirty}
+        disabled={(!isValid && dirty) || !dirty || loading === "pending"}
         aria-label="submit"
         className="text-white "
         size="large"
@@ -91,6 +104,4 @@ const Signup: React.FC<object> = function (): React.ReactNode {
       </Button>
     </Box>
   );
-};
-
-export default Signup;
+}

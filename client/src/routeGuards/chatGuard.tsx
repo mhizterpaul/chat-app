@@ -8,7 +8,7 @@ const AppGuard = () => {
   const selector = (state: RootState) => state.account;
   const account = useAppSelector(selector);
 
-  if (!account.user.profileSetup) {
+  if (!account.user?.profileSetup) {
     navigate("/profile");
     return;
   }
