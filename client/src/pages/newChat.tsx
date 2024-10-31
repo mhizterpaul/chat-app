@@ -4,7 +4,7 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import { z } from "../../../shared/node_modules/zod";
 import { HiOutlinePlus } from "react-icons/hi2";
-import avatar from "../assets/avatar.png";
+import avatar from "../assets/group.svg";
 import EditIcon from "../components/ui/editIcon";
 import { GrFormEdit } from "react-icons/gr";
 import { theme } from "../theme";
@@ -29,6 +29,8 @@ import { useFormik } from "formik";
 import Contacts from "../components/contacts";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { User } from "../store/slices/user/types";
+import { useAppDispatch } from "../store/hooks";
+import { setActivePage } from "../store/slices/user/actions";
 
 export type ChannelData = {
   name: string;
@@ -47,6 +49,8 @@ function NewConversation() {
     name: "",
     members: [],
   });
+  const dispatch = useAppDispatch();
+  dispatch(setActivePage({ name: "new-chat" }));
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
   };
@@ -176,7 +180,7 @@ function NewConversation() {
                   <CardMedia
                     component="img"
                     sx={{ width: "40%" }}
-                    image={avatar}
+                    image={channel.avatar || avatar}
                     alt="david"
                     className=" rounded-full p-1 mx-auto"
                   />

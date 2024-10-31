@@ -32,7 +32,7 @@ export default function EditProfile() {
   const dispatch = useAppDispatch();
   const selector = (state: RootState) => state.account;
   const account = useAppSelector(selector);
-
+  dispatch(action.setActivePage({ name: "profile" }));
   //Route Guard
   if (!account.user) navigate("sign-on");
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(

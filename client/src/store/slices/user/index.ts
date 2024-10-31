@@ -2,6 +2,7 @@ import { createSlice, isAnyOf } from "@reduxjs/toolkit";
 import actions from "./actions";
 import { User, IActivePage } from "./types";
 import { AxiosError } from "axios";
+import avatar from "../../../assets/avatar.avif";
 
 interface UserState {
   user: User | null;
@@ -76,6 +77,8 @@ const userSlice = createSlice({
         ),
         (state, action) => {
           state.user = action.payload;
+          if (!action.payload.image)
+            state.user = { ...action.payload, image: avatar };
           state.loading = "succeeded";
           state.error = null;
         }

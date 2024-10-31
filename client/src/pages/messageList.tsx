@@ -6,6 +6,7 @@ import {
   useGetUserMessagesQuery,
   useGetChannelMessagesQuery,
   useGetUserInfoQuery,
+  useGetUserChannelQueryWithDefault,
 } from "../store/slices/api/actions";
 import { uploadFile } from "../store/slices/api/actions";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
@@ -19,8 +20,33 @@ import { ImAttachment } from "react-icons/im";
 import { GrEmoji } from "react-icons/gr";
 import InputBase from "@mui/material/InputBase";
 import EmojiPicker from "emoji-picker-react";
+import Drawer from "../components/drawer";
 import { useSocket } from "../context/socket";
 import { removeMessage } from "../store/slices/chats/actions";
+import { useMobile } from "../utils/constants";
+
+const messageListMap =
+  (user: User) =>
+  (message: Message): MessageType => ({
+    id: btoa(`${message.sender.id}${message.timeStamp}`),
+    position: message.sender.id === user.id ? "right" : "left",
+    text: message.content || "",
+    title: "",
+    focus: false,
+    date: message.timeStamp,
+    avatar: message.sender.image,
+    titleColor: "#000",
+    forwarded: false,
+    replyButton: false,
+    removeButton: false,
+    status: "read",
+    notch: true,
+    data: {
+      uri: message.fileUrl,
+    },
+    retracted: false,
+    type: message.messageType,
+  });
 
 function MessageList({ messageListItem }: { messageListItem: Message[] }) {
   const selector = (state: RootState) => state.account.user;
@@ -30,6 +56,7 @@ function MessageList({ messageListItem }: { messageListItem: Message[] }) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
+  const { setIsClosing, mobileOpen, setMobileOpen } = useMobile();
   const dispatch = useAppDispatch();
   const [disabled, setDisabled] = React.useState(false);
   const socket = useSocket();
@@ -46,11 +73,7 @@ function MessageList({ messageListItem }: { messageListItem: Message[] }) {
   const messages = useAppSelector(mssgSeletor);
   const open = Boolean(anchorEl);
   const _id = open ? "simple-popover" : undefined;
-  //handle new messages
-  if (messages?.[0].recipient?.id === id || messages?.[0].channelId === id) {
-    setMessageQ((prev) => [...prev, messages[0]]);
-    dispatch(removeMessage(messages[0]));
-  }
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     if (disabled) return;
     setDisabled(true);
@@ -99,31 +122,30 @@ function MessageList({ messageListItem }: { messageListItem: Message[] }) {
     textInput.value = "";
     setDisabled(false);
   };
-  const messageList: MessageType[] = messageListItem.map(
-    (message: Message) => ({
-      id: btoa(`${message.sender.id}${message.timeStamp}`),
-      position: message.sender.id === user.id ? "right" : "left",
-      text: message.content || "",
-      title: "",
-      focus: false,
-      date: message.timeStamp,
-      avatar: message.sender.image,
-      titleColor: "#000",
-      forwarded: false,
-      replyButton: false,
-      removeButton: false,
-      status: "read",
-      notch: true,
-      data: {
-        uri: message.fileUrl,
-      },
-      retracted: false,
-      type: message.messageType,
-    })
-  );
+  const MessageListMap = messageListMap(user);
+  const messageList = messageListItem.map(MessageListMap);
+  const handleDrawerClose = () => {
+    setIsClosing(true);
+    setMobileOpen(false);
+  };
+
+  const handleDrawerTransitionEnd = () => {
+    setIsClosing(false);
+  };
+
+  //handle new messages
+  if (messages?.[0].recipient?.id === id || messages?.[0].channelId === id) {
+    setMessageQ((prev) => [...prev, messages[0]]);
+    dispatch(removeMessage(messages[0]));
+  }
 
   return (
     <Container>
+      <Drawer
+        mobileOpen={mobileOpen}
+        handleDrawerTransitionEnd={handleDrawerTransitionEnd}
+        handleDrawerClose={handleDrawerClose}
+      />
       <MList
         referance={messageListReference}
         className="message-list"
@@ -225,18 +247,30 @@ function MessageList({ messageListItem }: { messageListItem: Message[] }) {
 }
 
 function ChannelMessageList({ id }: { id: string }) {
-  const { data } = useGetChannelMessagesQuery(Number(id));
   const dispatch = useAppDispatch();
-  if (!data) return;
-  dispatch(setActivePage({ name: "channel:" + id }));
-  return <MessageList messageListItem={data.messages} />;
+  const channelMessages = useGetChannelMessagesQuery(Number(id));
+
+  const channelData = useGetUserChannelQueryWithDefault(Number(id));
+
+  if (!channelData || !channelMessages.data) return;
+  dispatch(
+    setActivePage({
+      name: channelData.name || "",
+      icon: channelData.avatar,
+      description: `${channelData.members.length} members`,
+    })
+  );
+  return <MessageList messageListItem={channelMessages.data?.messages} />;
 }
 
 function PrivateMessageList({ id }: { id: string }) {
   const { data } = useGetUserMessagesQuery(Number(id));
+  const selector = (state: RootState) => state.chats.contacts;
+  const contacts = useAppSelector(selector);
+  const contact = contacts.filter((_contact) => String(_contact.id) === id)[0];
   const dispatch = useAppDispatch();
   if (!data) return;
-  dispatch(setActivePage({ name: "private:" + id }));
+  dispatch(setActivePage({ name: contact.label, icon: contact.avatar }));
   return <MessageList messageListItem={data.messages} />;
 }
 export default function MessageListContainer() {

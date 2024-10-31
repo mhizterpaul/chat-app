@@ -19,7 +19,7 @@ import Drawer from "@mui/material/Drawer";
 import { useParams } from "react-router-dom";
 import { useAppSelector } from "../store/hooks";
 import { RootState } from "../store";
-import { useGetUserChannelQuery } from "../store/slices/api/actions";
+import { useGetUserChannelQueryWithDefault } from "../store/slices/api/actions";
 
 export const drawerWidth = 240;
 
@@ -31,16 +31,15 @@ interface Props {
   mobileOpen: boolean;
   handleDrawerTransitionEnd: () => void;
   handleDrawerClose: () => void;
-  container: HTMLElement | null;
 }
 
 function DrawerElement() {
   const { type, id } = useParams();
   const selector = (state: RootState) => state.account.user;
-  const { data } = useGetUserChannelQuery(Number(id));
+  const channel = useGetUserChannelQueryWithDefault(Number(id));
   const user = useAppSelector(selector);
   if (type === "private") {
-    if (!user) return;
+    if (!user) return null;
     return (
       <>
         <Box className="flex flex-col items-center content-center mt-8 gap-y-2 ">
@@ -62,21 +61,20 @@ function DrawerElement() {
     );
   }
 
+  if (!channel) return;
   return (
     <>
       <Toolbar className="items-center content-center mr-3 justify-between mb-2">
         <Box className="[&>*]:inline-block ">
           <Avatar
             className="mr-4 translate-y-1"
-            alt={data?.channel.name}
-            src={data?.channel.avatar}
+            alt={channel.name}
+            src={channel.avatar}
           />
           <Box>
-            <Typography className=" font-semibold ">
-              {data?.channel.name}
-            </Typography>
+            <Typography className=" font-semibold ">{channel.name}</Typography>
             <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              {data?.channel.members.length} Members
+              {channel.members.length} Members
             </Typography>
           </Box>
         </Box>
@@ -87,7 +85,7 @@ function DrawerElement() {
       </Toolbar>
       <Box className="w-full mb-4">
         <AvatarGroup max={12} className=" ml-6 w-max ">
-          {data?.channel.members.map((member) => (
+          {channel.members.map((member) => (
             <Avatar
               alt={`${member.firstName} ${member.lastName}`}
               src={member.image}
@@ -115,13 +113,10 @@ function DrawerElement() {
 }
 
 export default function ResponsiveDrawer(props: Props) {
-  const {
-    mobileOpen,
-    handleDrawerTransitionEnd,
-    handleDrawerClose,
-    container,
-  } = props;
+  const { mobileOpen, handleDrawerTransitionEnd, handleDrawerClose } = props;
 
+  const container =
+    window !== undefined ? () => window.document.getElementById("root") : undefined;
   return (
     <Box
       component="nav"

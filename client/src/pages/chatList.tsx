@@ -4,20 +4,23 @@ import { RootState } from "../store";
 import action from "../store/slices/chats/actions";
 import { Channel, Contact } from "../store/slices/chats/types";
 import avatar from "../assets/avatar.png";
+import group from "../assets/group.svg"
 import BottomNavigation from "../components/bottomNavigation";
 import { useNavigate } from "react-router-dom";
+import {setActivePage} from "../store/slices/user/actions"
 
 export default function ChatList() {
   const selector = (state: RootState) => state.chats;
   const dispatch = useAppDispatch();
   dispatch(action.getChannels());
   dispatch(action.getDmList());
+  dispatch(setActivePage({name: "chats"}))
   const chats = useAppSelector(selector);
   const navigate = useNavigate();
   const chatList = [
     ...chats.channelList.map((channel: Channel) => ({
       id: channel._id,
-      avatar: channel.avatar || avatar,
+      avatar: channel.avatar || group,
       alt: channel.name,
       subtitle: channel.messages[-1].content,
       date: channel.messages[-1].timeStamp,

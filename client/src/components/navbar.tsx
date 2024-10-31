@@ -3,13 +3,12 @@ import { AppBar, Box, Toolbar, IconButton, Typography } from "@mui/material";
 import { IoIosMenu, IoIosArrowRoundBack } from "react-icons/io";
 import { PiDotsThreeBold } from "react-icons/pi";
 import { LiaTimesSolid } from "react-icons/lia";
-import { drawerWidth } from "./drawer";
-import Drawer from "./drawer";
+//import { drawerWidth } from "./drawer";
 import { useAppSelector } from "../store/hooks";
 import { RootState } from "../store";
 import { useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
-
+import { useMobile } from "../utils/constants";
 type Props = {
   children?: React.ReactNode;
 };
@@ -23,40 +22,31 @@ const titleMap: { [key: string]: string } = {
 };
 
 export default function Navbar({ children }: Props) {
-  const [isClosing, setIsClosing] = React.useState(false);
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-  const navbarRef = React.useRef<HTMLDivElement>(null);
   const selector = (state: RootState) => state.account.activePage;
   const { name, description, icon } = useAppSelector(selector);
   const navigate = useNavigate();
+  const { isClosing, setMobileOpen, mobileOpen } = useMobile();
   const handleDrawerToggle = () => {
     if (!isClosing) {
       setMobileOpen(!mobileOpen);
     }
   };
 
-  const handleDrawerClose = () => {
-    setIsClosing(true);
-    setMobileOpen(false);
-  };
-
-  const handleDrawerTransitionEnd = () => {
-    setIsClosing(false);
-  };
   return (
     <>
       <AppBar
         position="static"
         className="shadow-lg"
-        ref={navbarRef}
-        sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
-        }}
+        sx={
+          {
+            //width: { sm: `calc(100% - ${drawerWidth})` },
+            //ml: { sm: `${drawerWidth}` },
+          }
+        }
       >
         <Toolbar sx={{ justifyContent: "space-between" }}>
           <IconButton onClick={() => navigate(-1)}>
-            <IoIosArrowRoundBack />
+            <IoIosArrowRoundBack onClick={() => navigate(-1)} />
           </IconButton>
           <Box className="flex place-items-center ">
             {icon}
@@ -110,12 +100,6 @@ export default function Navbar({ children }: Props) {
           })}
         </Toolbar>
       </AppBar>
-      <Drawer
-        mobileOpen={mobileOpen}
-        handleDrawerTransitionEnd={handleDrawerTransitionEnd}
-        handleDrawerClose={handleDrawerClose}
-        container={navbarRef.current ? navbarRef.current.parentElement : null}
-      />
       {children || <Outlet />}
     </>
   );

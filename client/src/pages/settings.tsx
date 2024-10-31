@@ -18,9 +18,10 @@ import * as React from "react";
 import { IoMdTime } from "react-icons/io";
 import { RiFontSize2 } from "react-icons/ri";
 import { RootState } from "../store/";
-import { useAppSelector } from "../store/hooks";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { useNavigate } from "react-router-dom";
 import { User } from "../store/slices/user/types";
+import { setActivePage } from "../store/slices/user/actions";
 
 const stackItemStyle = {
   marginLeft: "auto",
@@ -44,8 +45,9 @@ export default function Settings() {
   const selector = (state: RootState) => state.account.user;
   const user = useAppSelector(selector) as User;
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [navigateToProfile, setNavigateToProfile] = React.useState(false);
-
+  dispatch(setActivePage({ name: "settings" }));
   React.useEffect(() => {
     if (navigateToProfile) navigate("/profile");
   }, [navigateToProfile, navigate]);
@@ -197,5 +199,3 @@ export default function Settings() {
     </>
   );
 }
-
-

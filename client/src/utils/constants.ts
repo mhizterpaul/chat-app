@@ -1,9 +1,11 @@
+import * as React from "react";
+import { MobileContext } from "../context/mobile";
 export const customStyle = {
   width: "21rem",
 };
 
+export const useMobile = () => React.useContext(MobileContext);
 export const drawerBleeding = 56;
-
 export const ITEM_HEIGHT = 48;
 export const ITEM_PADDING_TOP = 8;
 export const MenuProps = {

@@ -3,7 +3,7 @@ import { Channel, Message } from "../chats/types";
 import { User } from "../user/types";
 import axios, { AxiosResponse } from "axios";
 import { API } from "../../../utils/constants";
-
+import group from "../../../assets/group.svg";
 // Define a service using a base URL and expected endpoints
 export const chatApi = createApi({
   reducerPath: "chat-api",
@@ -134,3 +134,9 @@ export const {
   useGetUserMessagesQuery,
   useGetUserInfoQuery,
 } = chatApi;
+
+export const useGetUserChannelQueryWithDefault = (id: number) => {
+  const data = useGetUserChannelQuery(id);
+  if (data.data?.channel.avatar !== undefined)
+    return { ...data.data.channel, avatar: group };
+};

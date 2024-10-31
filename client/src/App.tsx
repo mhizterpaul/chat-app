@@ -4,6 +4,7 @@ import SignOn from "./pages/signOn";
 import Welcome from "./pages/welcome";
 import AppGuard from "./routeGuards/appGuard";
 import ChatGuard from "./routeGuards/chatGuard";
+import MobileProvider from "./context/mobile";
 const Chats = React.lazy(() => import("./pages/chatList"));
 const MessageList = React.lazy(() => import("./pages/messageList"));
 const NewChat = React.lazy(() => import("./pages/newChat"));
@@ -19,13 +20,15 @@ function App() {
         <Route path="/404" element={<PageNotFound />} />
         <Route path="/sign-on" element={<SignOn />} />
         <Route element={<AppGuard />}>
-          <Route element={<Layout />}>
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route element={<ChatGuard />}>
-              <Route path="/new-chat/:type" element={<NewChat />} />
-              <Route path="/chats" element={<Chats />} />
-              <Route path="/messages/:type/:id" element={<MessageList />} />
+          <Route element={<MobileProvider />}>
+            <Route element={<Layout />}>
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route element={<ChatGuard />}>
+                <Route path="/new-chat/:type" element={<NewChat />} />
+                <Route path="/chats" element={<Chats />} />
+                <Route path="/messages/:type/:id" element={<MessageList />} />
+              </Route>
             </Route>
           </Route>
         </Route>
