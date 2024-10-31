@@ -1,7 +1,7 @@
 import { createSlice, isAnyOf } from "@reduxjs/toolkit";
 import actions from "./actions";
 import { Channel, Contact, Message } from "./types";
-import { ApiError } from "../user/types";
+import { AxiosError } from "axios";
 
 interface State {
   channelList: Channel[];
@@ -81,7 +81,7 @@ const userSlice = createSlice({
         (state, action) => {
           // Add user to the state array
           state.loading = "failed";
-          state.error = action.payload as ApiError;
+          state.error = action.error as AxiosError;
         }
       );
   },

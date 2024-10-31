@@ -2,12 +2,13 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Channel, Message } from "../chats/types";
 import { User } from "../user/types";
 import axios, { AxiosResponse } from "axios";
+import { API } from "../../../utils/constants";
 
 // Define a service using a base URL and expected endpoints
 export const chatApi = createApi({
   reducerPath: "chat-api",
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.API,
+    baseUrl: API,
     credentials: "include",
   }),
   endpoints: (builder) => ({
@@ -46,7 +47,7 @@ export function uploadFile(file: Blob) {
   formData.append("file", file);
 
   return axios.post<{ fileUrl: string }>(
-    process.env.API + "messages/upload-file",
+    API + "messages/upload-file",
     formData,
     {
       withCredentials: true,
@@ -59,7 +60,7 @@ export function uploadFile(file: Blob) {
 
 export function searchUsers(searchTerm: string) {
   return axios.post<{ contacts: User[] }>(
-    `${process.env.API}contacts/search`,
+    `${API}contacts/search`,
     { searchTerm },
     {
       withCredentials: true,
@@ -73,7 +74,7 @@ export function searchUsers(searchTerm: string) {
 export async function getUserInfo(ids: number[]): Promise<User[]> {
   try {
     const requests = ids.map((id) =>
-      axios.get<{ user: User }>(`${process.env.API}user/user-info`, {
+      axios.get<{ user: User }>(`${API}user/user-info`, {
         params: { id },
         withCredentials: true,
         headers: {
@@ -110,7 +111,7 @@ export async function createChannel({
 }): Promise<{ channel: Channel }> {
   try {
     const response = await axios.post<{ channel: Channel }>(
-      `${process.env.API}user/create-channel`,
+      `${API}user/create-channel`,
       { name, members, avatar },
       {
         withCredentials: true,

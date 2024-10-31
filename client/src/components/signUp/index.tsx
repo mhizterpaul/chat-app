@@ -9,13 +9,12 @@ import { customStyle } from "../../utils/constants";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { RootState } from "../../store";
 import { signup } from "../../store/slices/user/actions";
-import { useNavigate } from "react-router-dom";
 
 export default function Signup(): React.ReactNode {
   const selector = (state: RootState) => state.account.loading;
   const loading = useAppSelector(selector);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+
   const {
     handleChange,
     handleBlur,
@@ -32,15 +31,11 @@ export default function Signup(): React.ReactNode {
       confirmPassword: "",
     },
     validationSchema: toFormikValidationSchema(validationSchema),
-    onSubmit: (values) =>
-      dispatch(
-        signup({
-          email: values.email,
-          password: values.password,
-        })
-      ),
+    onSubmit: (values) => {
+      dispatch(signup(values));
+    },
   });
-  if (loading === "succeeded") navigate("/chats");
+
   return (
     <Box
       component="form"

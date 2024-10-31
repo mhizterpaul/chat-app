@@ -5,6 +5,7 @@ import { io, Socket } from "socket.io-client";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 import { Message } from "../store/slices/chats/types";
 import { addMessage } from "../store/slices/chats/actions";
+import { API } from "../utils/constants";
 
 const SocketContext = React.createContext<null | Socket<
   DefaultEventsMap,
@@ -28,7 +29,7 @@ export default function SocketProvider({
   const user = useAppSelector(selector);
   React.useEffect(() => {
     if (user) {
-      socket.current = io(process.env.API || "", {
+      socket.current = io(API || "", {
         withCredentials: true,
         query: { userid: user.id },
       });

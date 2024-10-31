@@ -19,7 +19,7 @@ function App() {
         <Route path="/404" element={<PageNotFound />} />
         <Route path="/sign-on" element={<SignOn />} />
         <Route element={<AppGuard />}>
-          <Layout>
+          <Route element={<Layout />}>
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
             <Route element={<ChatGuard />}>
@@ -27,7 +27,7 @@ function App() {
               <Route path="/chats" element={<Chats />} />
               <Route path="/messages/:type/:id" element={<MessageList />} />
             </Route>
-          </Layout>
+          </Route>
         </Route>
         <Route path="/" element={<Welcome />} />
         <Route path="*" element={<Navigate to="/404" />} />

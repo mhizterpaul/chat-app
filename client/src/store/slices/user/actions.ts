@@ -1,8 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { IActivePage, SignupInfo, User } from "./types";
+import { IActivePage, LoginInfo, SignupInfo, User } from "./types";
+import { API } from "../../../utils/constants";
 
-const API = process.env.API;
 export const signup = createAsyncThunk(
   "user/signup",
   async (userInfo: SignupInfo) => {
@@ -11,6 +11,8 @@ export const signup = createAsyncThunk(
         "Content-Type": "application/json",
       },
     });
+    console.log(response.data);
+
     return response.data;
   }
 );
@@ -66,7 +68,7 @@ export const updateProfile = createAsyncThunk(
 
 export const login = createAsyncThunk(
   "user/login",
-  async (userInfo: SignupInfo) => {
+  async (userInfo: LoginInfo) => {
     const response = await axios.post(API + "user/login", userInfo, {
       headers: {
         "Content-Type": "application/json",

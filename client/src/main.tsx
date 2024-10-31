@@ -4,17 +4,19 @@ import { StyledEngineProvider, ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";
 import App from "./App.tsx";
 import "./index.css";
-import Drawer from "./components/drawer.tsx";
-//import SocketProvider from "./context/socket";
+import { Provider as ReduxProvider } from "react-redux";
+import store from "./store";
+import SocketProvider from "./context/socket";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
-        {
-          //<SocketProvider></SocketProvider>
-        }
-        <Drawer />
+        <ReduxProvider store={store}>
+          <SocketProvider>
+            <App />
+          </SocketProvider>
+        </ReduxProvider>
       </ThemeProvider>
     </StyledEngineProvider>
   </StrictMode>

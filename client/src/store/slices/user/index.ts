@@ -1,10 +1,11 @@
 import { createSlice, isAnyOf } from "@reduxjs/toolkit";
 import actions from "./actions";
-import { User, ApiError, IActivePage } from "./types";
+import { User, IActivePage } from "./types";
+import { AxiosError } from "axios";
 
 interface UserState {
   user: User | null;
-  error: ApiError | null;
+  error: AxiosError | null;
   loading: "idle" | "pending" | "succeeded" | "failed";
   activePage: IActivePage;
 }
@@ -33,6 +34,25 @@ const userSlice = createSlice({
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
     builder
+      .addCase(actions.logout.fulfilled, (state) => {
+        state.loading = "succeeded";
+        state.error = null;
+        state.user = null;
+      })
+      .addCase(actions.logout.rejected, (state, action) => {
+        state.loading = "failed";
+        state.error = action.payload as AxiosError;
+      })
+      .addCase(actions.removeProfileImage.fulfilled, (state) => {
+        state.error = null;
+        state.loading = "succeeded";
+        state.user = { ...state.user, image: undefined } as User;
+      })
+      .addCase(actions.addProfileImage.fulfilled, (state, action) => {
+        state.error = null;
+        state.loading = "succeeded";
+        state.user = { ...state.user, image: action.payload.image } as User;
+      })
       .addMatcher(
         isAnyOf(
           actions.signup.pending,
@@ -72,29 +92,9 @@ const userSlice = createSlice({
         (state, action) => {
           // Add user to the state array
           state.loading = "failed";
-          state.error = action.payload as ApiError;
+          state.error = action.error as AxiosError;
         }
       );
-    builder
-      .addCase(actions.logout.fulfilled, (state) => {
-        state.loading = "succeeded";
-        state.error = null;
-        state.user = null;
-      })
-      .addCase(actions.logout.rejected, (state, action) => {
-        state.loading = "failed";
-        state.error = action.payload as ApiError;
-      })
-      .addCase(actions.removeProfileImage.fulfilled, (state) => {
-        state.error = null;
-        state.loading = "succeeded";
-        state.user = { ...state.user, image: undefined } as User;
-      })
-      .addCase(actions.addProfileImage.fulfilled, (state, action) => {
-        state.error = null;
-        state.loading = "succeeded";
-        state.user = { ...state.user, image: action.payload.image } as User;
-      });
   },
 });
 

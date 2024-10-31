@@ -7,14 +7,12 @@ import { customStyle } from "../../utils/constants";
 import { login } from "../../store/slices/user/actions";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { RootState } from "../../store";
-import { useNavigate } from "react-router-dom";
 
 const Login: React.FC = function () {
   const dispatch = useAppDispatch();
   const selector = (state: RootState) => state.account.loading;
   const loading = useAppSelector(selector);
-  const navigate = useNavigate();
-  if (loading === "succeeded") navigate("/chats");
+
   const { values, isValid, dirty, handleSubmit, handleChange, handleBlur } =
     useFormik({
       initialValues: {

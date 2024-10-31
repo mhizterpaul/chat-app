@@ -6,14 +6,16 @@ import * as React from "react";
 
 const AppGuard = ({ children }: { children?: React.ReactNode }) => {
   const navigate = useNavigate();
-  const selector = (state: RootState) => state.account;
-  const account = useAppSelector(selector);
+  const selector = (state: RootState) => state.account.user;
+  const user = useAppSelector(selector);
+  React.useEffect(() => {
+    if (!user) {
+      navigate("/sign-on");
+      return;
+    }
+  }, [user, navigate]);
 
-  if (!account.user) {
-    navigate("/sign-on");
-    return;
-  }
-
+  if (!user) return null;
   return children || <Outlet />;
 };
 

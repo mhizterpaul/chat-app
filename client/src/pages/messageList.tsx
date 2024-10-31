@@ -47,10 +47,7 @@ function MessageList({ messageListItem }: { messageListItem: Message[] }) {
   const open = Boolean(anchorEl);
   const _id = open ? "simple-popover" : undefined;
   //handle new messages
-  if (
-    messages?.[0].recipient?.id === Number(id) ||
-    messages?.[0].channelId === Number(id)
-  ) {
+  if (messages?.[0].recipient?.id === id || messages?.[0].channelId === id) {
     setMessageQ((prev) => [...prev, messages[0]]);
     dispatch(removeMessage(messages[0]));
   }

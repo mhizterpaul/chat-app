@@ -1,8 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Message } from "./types";
+import { API } from "../../../utils/constants";
 
-const API = process.env.API;
 export const getChannels = createAsyncThunk("chats/getChannels", async () => {
   const response = await axios.get(API + "/get-user-channels", {
     withCredentials: true,

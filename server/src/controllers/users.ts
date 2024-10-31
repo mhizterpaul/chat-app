@@ -32,7 +32,7 @@ export const signup = async function (
 ) {
   const { email, password } = req.body;
   try {
-    signupSchema.parse({ email, password });
+    signupSchema.parse(req.body);
     Users.create({ email, password }).then((user) => {
       res.cookie("jwt", createToken(email, user.id), {
         maxAge,
@@ -49,10 +49,12 @@ export const signup = async function (
     if (e instanceof z.ZodError) {
       res.status(401).json({ message: "bad request" });
       next(e);
+      return;
     }
     if ((e as any).code === 11000) {
       res.status(409).json({ message: "User already exists" });
       next(e);
+      return;
     }
 
     res.status(500).json({ message: "unexpected error" });
@@ -97,6 +99,7 @@ export const login = async function (
         message: "invalid password and Email",
       });
       next(e);
+      return;
     }
     res.status(500).json("unexpected error");
     next(e);

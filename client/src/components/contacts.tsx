@@ -111,12 +111,12 @@ function SelectMembers({ type, setChannel, selectContacts }: Props) {
                       marginRight: "1.25rem",
                     }}
                     className={`${
-                      personName.includes(id) ? "ring-1 ring-[#4ab6f7]" : ""
+                      personName.includes(Number(id)) ? "ring-1 ring-[#4ab6f7]" : ""
                     }`}
                   />
                   <ListItemText primary={`${firstName} ${lastName}`} />
                   {type === "channel" ? (
-                    <Checkbox checked={personName.includes(id)} />
+                    <Checkbox checked={personName.includes(Number(id))} />
                   ) : null}
                 </MenuItem>
               ))

@@ -10,6 +10,13 @@ import Routes from "./routes";
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(
+  cors({
+    origin: [process.env.ORIGIN],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    credentials: true,
+  })
+);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());

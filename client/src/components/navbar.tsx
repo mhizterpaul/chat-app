@@ -8,9 +8,10 @@ import Drawer from "./drawer";
 import { useAppSelector } from "../store/hooks";
 import { RootState } from "../store";
 import { useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
 type Props = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 const titleMap: { [key: string]: string } = {
@@ -115,7 +116,7 @@ export default function Navbar({ children }: Props) {
         handleDrawerClose={handleDrawerClose}
         container={navbarRef.current ? navbarRef.current.parentElement : null}
       />
-      {children}
+      {children || <Outlet />}
     </>
   );
 }

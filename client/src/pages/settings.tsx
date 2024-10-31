@@ -40,10 +40,15 @@ const stackItemStyle = {
   },
 };
 
-function Profile() {
+export default function Settings() {
   const selector = (state: RootState) => state.account.user;
   const user = useAppSelector(selector) as User;
   const navigate = useNavigate();
+  const [navigateToProfile, setNavigateToProfile] = React.useState(false);
+
+  React.useEffect(() => {
+    if (navigateToProfile) navigate("/profile");
+  }, [navigateToProfile, navigate]);
   return (
     <>
       <Container
@@ -104,7 +109,7 @@ function Profile() {
               variant="contained"
               size="large"
               className=" text-center font-bold"
-              onClick={() => navigate("/profile")}
+              onClick={() => setNavigateToProfile(true)}
             >
               <EditIcon className=" mr-2 pb-[2px] h-[1.1rem] w-[1.1rem]" /> Edit
               Profile
@@ -193,4 +198,4 @@ function Profile() {
   );
 }
 
-export default Profile;
+

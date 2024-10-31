@@ -3,19 +3,21 @@ import { ReactNode } from "react";
 type SignupInfo = {
   email: string;
   password: string;
+  confirmPassword: string;
 };
 
+type LoginInfo = {
+  email: string, 
+  password: string
+}
+
 interface User {
-  id: number;
+  id: string;
   email: string;
   firstName?: string;
   lastName?: string;
   image?: string;
   profileSetup: boolean;
-}
-
-interface ApiError {
-  message: string;
 }
 
 interface IActivePage {

@@ -10,7 +10,7 @@ type Message = {
 };
 
 type Channel = {
-  _id: number;
+  _id: string;
   name: string;
   members: User[];
   admin: User;
@@ -21,7 +21,7 @@ type Channel = {
 };
 
 type Contact = {
-  _id: number;
+  _id: string;
   firstName: string;
   lastName: string;
   lastMessage: {

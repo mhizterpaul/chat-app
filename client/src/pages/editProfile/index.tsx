@@ -21,7 +21,7 @@ import { useFormik } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import validationSchema from "./schema";
 import { HiOutlineEnvelope } from "react-icons/hi2";
-import { names, MenuProps } from "../../utils/constants";
+import { MenuProps } from "../../utils/constants";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { RootState } from "../../store";
 import { useNavigate } from "react-router-dom";
@@ -249,7 +249,7 @@ export default function EditProfile() {
             <MenuItem value="Homepage">
               <PiSquaresFourLight /> <Typography>Homepage</Typography>
             </MenuItem>
-            {names.map((name) => (
+            {["chat list", "status"].map((name) => (
               <MenuItem key={name} value={name}>
                 {name}
               </MenuItem>
