@@ -39,7 +39,9 @@ const userSlice = createSlice({
           actions.login.pending,
           actions.logout.pending,
           actions.updateProfile.pending,
-          actions.getUserInfo.pending
+          actions.getUserInfo.pending,
+          actions.removeProfileImage.pending,
+          actions.addProfileImage.pending
         ),
         (state) => {
           state.loading = "pending";
@@ -53,7 +55,6 @@ const userSlice = createSlice({
           actions.getUserInfo.fulfilled
         ),
         (state, action) => {
-          // Add user to the state array
           state.user = action.payload;
           state.loading = "succeeded";
           state.error = null;
@@ -64,7 +65,9 @@ const userSlice = createSlice({
           actions.signup.rejected,
           actions.updateProfile.rejected,
           actions.login.rejected,
-          actions.getUserInfo.rejected
+          actions.getUserInfo.rejected,
+          actions.removeProfileImage.rejected,
+          actions.addProfileImage.rejected
         ),
         (state, action) => {
           // Add user to the state array
@@ -74,15 +77,23 @@ const userSlice = createSlice({
       );
     builder
       .addCase(actions.logout.fulfilled, (state) => {
-        // Add user to the state array
         state.loading = "succeeded";
         state.error = null;
         state.user = null;
       })
       .addCase(actions.logout.rejected, (state, action) => {
-        // Add user to the state array
         state.loading = "failed";
         state.error = action.payload as ApiError;
+      })
+      .addCase(actions.removeProfileImage.fulfilled, (state) => {
+        state.error = null;
+        state.loading = "succeeded";
+        state.user = { ...state.user, image: undefined } as User;
+      })
+      .addCase(actions.addProfileImage.fulfilled, (state, action) => {
+        state.error = null;
+        state.loading = "succeeded";
+        state.user = { ...state.user, image: action.payload.image } as User;
       });
   },
 });

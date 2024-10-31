@@ -120,6 +120,7 @@ export async function getAllContacts(
     );
     const contacts = users.map((user) => ({
       label: user.firstName ? `${user.firstName} ${user.lastName}` : user.email,
+      id: user._id,
       avatar: user.image,
     }));
     response.status(200).json({ contacts });

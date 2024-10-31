@@ -7,21 +7,21 @@ export const getChannels = createAsyncThunk("chats/getChannels", async () => {
   const response = await axios.get(API + "/get-user-channels", {
     withCredentials: true,
   });
-  return response.data;
+  return response.data.channels;
 });
 
 export const getDmList = createAsyncThunk("chats/getDmList", async () => {
   const response = await axios.get(API + "/get-contacts-for-dm", {
     withCredentials: true,
   });
-  return response.data;
+  return response.data.contacts;
 });
 
 export const getContacts = createAsyncThunk("chats/getContacts", async () => {
   const response = await axios.get(API + "/get-all-contacts", {
     withCredentials: true,
   });
-  return response.data;
+  return response.data.contacts;
 });
 
 export const addMessage = (payload: Message) => ({

@@ -6,11 +6,14 @@ export default z.object({
     .email("Please enter a valid email address")
     .min(7, "Please enter a valid email address"),
   name: z
-    .string()
-    .min(5, "name too short")
-    .refine((value) => value.trim().length > 0, {
-      message: "invalid name",
-    }),
+  .string()
+  .min(7, "name too short")
+  .refine((value) => value.trim().length > 0, {
+    message: "invalid name",
+  })
+  .refine((value) => /\s/.test(value), {
+    message: "names must be space seperated",
+  }),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters long")

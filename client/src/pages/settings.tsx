@@ -11,13 +11,16 @@ import {
   Typography,
   Switch,
 } from "@mui/material";
-import avatar from "../assets/avatar2.jpg";
 import EditIcon from "../components/ui/editIcon.tsx";
 import BottomNavigation from "../components/bottomNavigation";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import * as React from "react";
 import { IoMdTime } from "react-icons/io";
 import { RiFontSize2 } from "react-icons/ri";
+import { RootState } from "../store/";
+import { useAppSelector } from "../store/hooks";
+import { useNavigate } from "react-router-dom";
+import { User } from "../store/slices/user/types";
 
 const stackItemStyle = {
   marginLeft: "auto",
@@ -38,6 +41,9 @@ const stackItemStyle = {
 };
 
 function Profile() {
+  const selector = (state: RootState) => state.account.user;
+  const user = useAppSelector(selector) as User;
+  const navigate = useNavigate();
   return (
     <>
       <Container
@@ -71,7 +77,7 @@ function Profile() {
             <CardMedia
               component="img"
               sx={{ width: "50%" }}
-              image={avatar}
+              image={user.image}
               alt="david"
               className=" rounded-full border-[#8653cb] p-1 border-[3px]  mx-auto"
             />
@@ -86,10 +92,10 @@ function Profile() {
               className=" text-center capitalize "
               component="div"
             >
-              Kevin Backer
+              {`${user.firstName} ${user.lastName}`}
             </Typography>
             <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              kevin.backer188593@gmail.com
+              {user.email}
             </Typography>
           </CardContent>
           <CardActions>
@@ -98,6 +104,7 @@ function Profile() {
               variant="contained"
               size="large"
               className=" text-center font-bold"
+              onClick={() => navigate("/profile")}
             >
               <EditIcon className=" mr-2 pb-[2px] h-[1.1rem] w-[1.1rem]" /> Edit
               Profile

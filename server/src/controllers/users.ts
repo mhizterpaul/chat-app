@@ -103,7 +103,7 @@ export const login = async function (
   }
 };
 export async function getUserInfo(request: RequestWithId, response: Response) {
-  const { id } = request.body;
+  const { id } = request.params;
   const { userId } = request;
   try {
     const userData = await Users.findById(id || userId);
@@ -182,14 +182,14 @@ export async function addProfileImage(
       size: file.size,
     });
     uploadStream.end(file.buffer);
-    let link;
+    const data = { image: "" };
     uploadStream.on("complete", async (file) => {
-      link = await file.link({ noKey: true });
+      data.image = await file.link({ noKey: true });
     });
     const updatedUser = await Users.findOneAndUpdate(
       { id: request.userId },
       {
-        image: link,
+        image: data.image,
       },
       { new: true, runValidators: true }
     );

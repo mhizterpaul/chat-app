@@ -7,7 +7,7 @@ interface State {
   channelList: Channel[];
   dmList: Contact[];
   error: { message: string } | null;
-  contacts: { label: string }[];
+  contacts: { label: string; id: number; avatar: string }[];
   messages: (Message & { channelId?: number })[];
   loading: "idle" | "succeeded" | "failed" | "pending";
 }

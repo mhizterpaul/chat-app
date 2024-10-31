@@ -9,6 +9,9 @@ import EditIcon from "../components/ui/editIcon";
 import { GrFormEdit } from "react-icons/gr";
 import { theme } from "../theme";
 import SwipableDrawer from "../components/swipableDrawer";
+import { getUserInfo } from "../store/slices/api/actions";
+import { createChannel } from "../store/slices/api/actions";
+import { useNavigate } from "react-router-dom";
 import {
   Container,
   Box,
@@ -23,18 +26,46 @@ import {
   CardMedia,
 } from "@mui/material";
 import { useFormik } from "formik";
+import Contacts from "../components/contacts";
 import { toFormikValidationSchema } from "zod-formik-adapter";
+import { User } from "../store/slices/user/types";
 
+export type ChannelData = {
+  name: string;
+  members: User[];
+  avatar?: string;
+};
 function NewConversation() {
   const containerRef = React.useRef(null);
   const [value, setValue] = React.useState("0");
   const handleTab = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
+  const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
-
+  const [channel, setChannel] = React.useState<ChannelData>({
+    name: "",
+    members: [],
+  });
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
+  };
+  const [selectContacts, setSelectContacts] = React.useState(false);
+  const handleSetChannel = async (
+    key: keyof ChannelData,
+    value: ChannelData[keyof ChannelData] | number[]
+  ) => {
+    if (key === "members") {
+      try {
+        const members = await getUserInfo(value as number[]);
+        setChannel((prev) => ({ ...prev, members }));
+      } catch (e) {
+        console.log(e);
+      }
+      return;
+    }
+
+    setChannel((prev) => ({ ...prev, [key]: value }));
   };
   const {
     handleChange,
@@ -52,8 +83,17 @@ function NewConversation() {
     validationSchema: toFormikValidationSchema(
       z.object({ name: z.string().min(3) })
     ),
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+    onSubmit: async (values, { resetForm }) => {
+      const { name } = values;
+      if (!channel.members) return;
+      const channelData = { ...channel, name };
+      try {
+        const { channel } = await createChannel(channelData);
+        navigate("/messages/channel/" + channel._id);
+        resetForm();
+      } catch (e) {
+        console.log(e);
+      }
     },
   });
   return (
@@ -98,14 +138,14 @@ function NewConversation() {
             onChange={handleTab}
           >
             <Tab
-              aria-label="conversation"
+              aria-label="channel"
               value={"0"}
-              label={Number(value) ? "Conversation" : undefined}
+              label={Number(value) ? "Channel" : undefined}
               icon={
                 !Number(value) ? (
                   <SnackbarContent
                     sx={{ backgroundColor: "background.paper" }}
-                    message="Conversation"
+                    message="Channel"
                   />
                 ) : undefined
               }
@@ -125,104 +165,140 @@ function NewConversation() {
             />
           </TabList>
           <TabPanel value={"0"}>
-            <Box
-              sx={{
-                position: "relative",
-                borderSpacing: "1px",
-              }}
-            >
-              <CardMedia
-                component="img"
-                sx={{ width: "40%" }}
-                image={avatar}
-                alt="david"
-                className=" rounded-full p-1 mx-auto"
-              />
-              <IconButton
-                onClick={toggleDrawer(true)}
-                className=" absolute right-[26%] bottom-1 sm:right-[28%] sm:bottom-[3%] "
-              >
-                <EditIcon className=" h-12 w-12 text-[#4ab6f7] bg-white rounded-full border-gray-400 border-[1px] p-2 " />
-              </IconButton>
-            </Box>
-            <Box
-              component="form"
-              onSubmit={handleSubmit}
-              noValidate
-              aria-label="signup"
-              className=" w-full flex flex-col place-items-center gap-y-6 mt-6 "
-            >
-              <Typography variant="h6">
-                {values.name || "Conversation Name"}
-              </Typography>
-              <TextField
-                onChange={handleChange}
-                onBlur={handleBlur}
-                placeholder="Add Conversation Name"
-                type="name"
-                aria-label="name"
-                label="Conversation Name"
-                name="name"
-                variant="outlined"
-                value={values.name}
-                error={touched.name && Boolean(errors.name)}
-                helperText={touched.name && errors.name}
-              />
-              <Box
-                sx={{ borderColor: "secondary.body1" }}
-                className="flex hover:ring-black place-items-center px-4 ring-1 ring-inset min-h-[59px] min-w-[252px] ring-gray-300 rounded-md justify-between "
-              >
-                {true ? (
-                  <>
-                    <Typography sx={{ color: theme.palette.primary.main }}>
-                      Add Members
+            {!selectContacts && (
+              <>
+                <Box
+                  sx={{
+                    position: "relative",
+                    borderSpacing: "1px",
+                  }}
+                >
+                  <CardMedia
+                    component="img"
+                    sx={{ width: "40%" }}
+                    image={avatar}
+                    alt="david"
+                    className=" rounded-full p-1 mx-auto"
+                  />
+                  <IconButton
+                    onClick={toggleDrawer(true)}
+                    className=" absolute right-[26%] bottom-1 sm:right-[28%] sm:bottom-[3%] "
+                  >
+                    <EditIcon className=" h-12 w-12 text-[#4ab6f7] bg-white rounded-full border-gray-400 border-[1px] p-2 " />
+                  </IconButton>
+                </Box>
+                <Box
+                  component="form"
+                  onSubmit={handleSubmit}
+                  noValidate
+                  aria-label="create channel"
+                  className=" w-full flex flex-col place-items-center gap-y-6 mt-6 "
+                >
+                  <Typography variant="h6">
+                    {values.name || "Conversation Name"}
+                  </Typography>
+                  <TextField
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder="Add Conversation Name"
+                    type="name"
+                    aria-label="name"
+                    label="Conversation Name"
+                    name="name"
+                    variant="outlined"
+                    value={values.name}
+                    error={touched.name && Boolean(errors.name)}
+                    helperText={touched.name && errors.name}
+                  />
+                  <Box
+                    sx={{ borderColor: "secondary.body1" }}
+                    className="flex hover:ring-black relative place-items-center px-4 ring-1 ring-inset min-h-[59px] min-w-[252px] ring-gray-300 rounded-md justify-between "
+                  >
+                    {!channel.members.length ? (
+                      <>
+                        <Typography sx={{ color: theme.palette.primary.main }}>
+                          Add Members
+                        </Typography>
+                        <IconButton onClick={() => setSelectContacts(true)}>
+                          <HiOutlinePlus className="text-[#4ab6f7]" />
+                        </IconButton>
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex mx-2 justify-between gap-x-6">
+                          <Typography>
+                            <span className="text-[#9965d4]">
+                              {channel.members.length}
+                            </span>{" "}
+                            are selected
+                          </Typography>
+                          <div>
+                            <IconButton
+                              className="mr-4"
+                              onClick={() => setSelectContacts(true)}
+                            >
+                              <GrFormEdit className="text-[#4ab6f7]" />
+                            </IconButton>
+                            <IconButton onClick={() => setSelectContacts(true)}>
+                              <HiOutlinePlus className="text-[#4ab6f7]" />
+                            </IconButton>
+                          </div>
+                        </div>
+                        <AvatarGroup total={12}>
+                          {channel.members.map((member) => (
+                            <Avatar
+                              alt={`${member.firstName} ${member.lastName}`}
+                              src={member.image}
+                            />
+                          ))}
+                        </AvatarGroup>
+                      </>
+                    )}
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        position: "absolute",
+                        left: "1rem",
+                        top: 0,
+                        color: "text.secondary",
+                      }}
+                    >
+                      Members
                     </Typography>
-                    <IconButton>
-                      <HiOutlinePlus className="text-[#4ab6f7]" />
-                    </IconButton>
-                  </>
-                ) : (
-                  <>
-                    <div>
-                      <Typography></Typography>
-                      <IconButton>
-                        <GrFormEdit />
-                      </IconButton>
-                      <IconButton>
-                        <HiOutlinePlus />
-                      </IconButton>
-                    </div>
-                    <AvatarGroup total={24}>
-                      <Avatar alt="Remy Sharp" src={avatar} />
-                      <Avatar alt="Travis Howard" src={avatar} />
-                      <Avatar alt="Agnes Walker" src={avatar} />
-                      <Avatar
-                        alt="Trevor Henderson"
-                        src="/static/images/avatar/5.jpg"
-                      />
-                    </AvatarGroup>
-                  </>
-                )}
-              </Box>
-              <Box sx={{ flexGrow: 1 }} />
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={(!isValid && dirty) || !dirty}
-                aria-label="submit"
-                className="text-white "
-              >
-                Create Conversation
-              </Button>
-            </Box>
+                  </Box>
+                  <Box sx={{ flexGrow: 1 }} />
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    disabled={
+                      (!isValid && dirty) || !dirty || !channel.members.length
+                    }
+                    aria-label="submit"
+                    className="text-white "
+                  >
+                    Create Channel
+                  </Button>
+                </Box>
+              </>
+            )}
+            {selectContacts && (
+              <Contacts
+                type="channel"
+                selectContacts={setSelectContacts}
+                setChannel={handleSetChannel}
+              />
+            )}
           </TabPanel>
-          <TabPanel value={"1"}></TabPanel>
+          <TabPanel value={"1"}>
+            <Contacts type="private" />
+          </TabPanel>
         </TabContext>
         {containerRef.current ? (
           <SwipableDrawer
             open={open}
             toggleDrawer={toggleDrawer}
             container={containerRef.current}
+            setChannel={handleSetChannel}
           />
         ) : null}
       </Container>

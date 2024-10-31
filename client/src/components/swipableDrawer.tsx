@@ -11,18 +11,22 @@ import {
   SvgIcon,
   ListItemText,
 } from "@mui/material";
-import {drawerBleeding} from "../utils/constants"
-
+import { uploadFile } from "../store/slices/api/actions";
+import { drawerBleeding } from "../utils/constants";
+import { ChannelData } from "../pages/newChat";
 
 type Props = {
   container: HTMLDivElement;
   toggleDrawer: (value: boolean) => void;
   open: boolean;
+  setChannel: (
+    key: keyof ChannelData,
+    value: ChannelData[keyof ChannelData] | number[]
+  ) => unknown;
 };
 
 export default function SwipeableEdgeDrawer(props: Props) {
-  const { container, open, toggleDrawer } = props;
-
+  const { container, open, toggleDrawer, setChannel } = props;
   return (
     <>
       <SwipeableDrawer
@@ -65,19 +69,45 @@ export default function SwipeableEdgeDrawer(props: Props) {
             }}
           ></div>
           <MenuList sx={{ marginTop: "3rem" }}>
-            <MenuItem>
-              <ListItemIcon
-                sx={{ width: "1.5rem", height: "1.5rem", alignItems: "center" }}
-              >
-                <AiOutlinePicture />
-              </ListItemIcon>
-              <ListItemText className="inline-block align-top ">
-                Upload a Photo
-              </ListItemText>
-              <ListItemIcon sx={{ color: "text.secondary" }}>
-                <TbArrowNarrowRight />
-              </ListItemIcon>
-            </MenuItem>
+            <input
+              accept="image/*"
+              style={{ display: "none" }}
+              id="file-upload"
+              name="file"
+              type="file"
+              onChange={async (event) => {
+                const file = event.target.files?.[0];
+                let fileUrl;
+                if (file) {
+                  try {
+                    const { data } = await uploadFile(file);
+                    fileUrl = data.fileUrl;
+                  } catch (e) {
+                    console.log(e);
+                  }
+                }
+                if (fileUrl) setChannel("avatar", fileUrl);
+              }}
+            />
+            <label htmlFor="file-upload">
+              <MenuItem>
+                <ListItemIcon
+                  sx={{
+                    width: "1.5rem",
+                    height: "1.5rem",
+                    alignItems: "center",
+                  }}
+                >
+                  <AiOutlinePicture />
+                </ListItemIcon>
+                <ListItemText className="inline-block align-top ">
+                  Upload a Photo
+                </ListItemText>
+                <ListItemIcon sx={{ color: "text.secondary" }}>
+                  <TbArrowNarrowRight />
+                </ListItemIcon>
+              </MenuItem>
+            </label>
             <MenuItem>
               <ListItemIcon sx={{ width: "1.5rem", height: "1.5rem" }}>
                 <GrFormEdit className=" -ml-1 w-6 h-6" />
@@ -87,7 +117,7 @@ export default function SwipeableEdgeDrawer(props: Props) {
                 <TbArrowNarrowRight />
               </ListItemIcon>
             </MenuItem>
-            <MenuItem>
+            <MenuItem onClick={() => setChannel("avatar", undefined)}>
               <ListItemIcon sx={{ width: "1.5rem", height: "1.5rem" }}>
                 <SvgIcon>
                   <svg

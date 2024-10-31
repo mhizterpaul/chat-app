@@ -2,6 +2,7 @@ import { IoKeyOutline } from "react-icons/io5";
 import { PiSquaresFourLight } from "react-icons/pi";
 import * as React from "react";
 import { theme } from "../../theme";
+import EditIcon from "../../components/ui/editIcon";
 import {
   Box,
   Typography,
@@ -16,7 +17,6 @@ import {
   Menu,
 } from "@mui/material";
 import action from "../../store/slices/user/actions";
-import avatar from "../../assets/avatar2.jpg";
 import { useFormik } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import validationSchema from "./schema";
@@ -96,8 +96,8 @@ export default function EditProfile() {
               width: "33%",
             }}
             className=" rounded-full "
-            src={avatar}
-            alt="kevin Backer"
+            src={account.user?.image}
+            alt={`${account.user?.firstName} ${account.user?.lastName}`}
           />
           <Button
             sx={{
@@ -110,7 +110,7 @@ export default function EditProfile() {
             size="large"
             onClick={handleClick}
           >
-            edit Avatar
+            <EditIcon /> edit Avatar
           </Button>
           <Menu
             id={id}

@@ -1,8 +1,12 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
+import dotenv from "dotenv";
 
 // https://vitejs.dev/config/
+const envDir = path.resolve(__dirname);
+dotenv.config({ path: path.join(envDir, ".env") });
+
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -14,4 +18,5 @@ export default defineConfig({
       "@utils": path.resolve(__dirname, "src/utils"),
     },
   },
+  envDir,
 });

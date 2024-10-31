@@ -11,7 +11,7 @@ router.post("/signup", User.signup);
 
 router.post("/login", User.login);
 
-router.get("/user-info", verifyToken, User.getUserInfo);
+router.get("/user-info/:id", verifyToken, User.getUserInfo);
 
 router.post("/update-profile", verifyToken, User.updateProfile);
 

@@ -7,6 +7,11 @@ const router = Router();
 router.post("/create-channel", verifyToken, Channels.createChannel);
 router.get("/get-user-channels", verifyToken, Channels.getUserChannels);
 router.get(
+  "/get-user-channel/:channelId",
+  verifyToken,
+  Channels.getUserChannel
+);
+router.get(
   "/get-channel-messages/:channelId",
   verifyToken,
   Channels.getChannelMessages

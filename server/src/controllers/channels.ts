@@ -47,7 +47,34 @@ export async function getUserChannels(
     const channels = await Channels.find({
       $or: [{ admin: userId }, { members: userId }],
     }).sort({ updatedAt: -1 });
-    response.send(200).json({ channels });
+    response.status(200).json({ channels });
+    return;
+  } catch (e) {
+    console.log(e);
+    response.status(500).json({ message: "something unexpected happened" });
+    return;
+  }
+}
+
+export async function getUserChannel(
+  request: RequestWithId,
+  response: Response
+) {
+  const { channelId } = request.params;
+  if (!channelId) {
+    response.status(400).json({ message: "channelId required" });
+    return;
+  }
+  try {
+    const userId = new mongoose.Types.ObjectId(request.userId);
+    const channel = await Channels.findById(channelId);
+    if (channel) {
+      response.status(200).json({ channel });
+      return;
+    }
+    response
+      .status(404)
+      .json({ message: "channel with the specified Id not found" });
     return;
   } catch (e) {
     console.log(e);
@@ -86,4 +113,5 @@ export default {
   createChannel,
   getUserChannels,
   getChannelMessages,
+  getUserChannel,
 };

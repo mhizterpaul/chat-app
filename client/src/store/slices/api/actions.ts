@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Channel, Message } from "../chats/types";
 import { User } from "../user/types";
+import axios, { AxiosResponse } from "axios";
 
 // Define a service using a base URL and expected endpoints
 export const chatApi = createApi({
@@ -10,52 +11,125 @@ export const chatApi = createApi({
     credentials: "include",
   }),
   endpoints: (builder) => ({
-    getUserInfo: builder.query<User, number>({
+    getUserInfo: builder.query<{ user: User }, number>({
       query: (id) => ({
         url: `user/user-info`,
         method: "GET",
-        body: { id },
+        params: { id },
       }),
     }),
-    getAllContacts: builder.query<User[], string>({
-      query: (searchTerm) => ({
-        url: `contacts/search`,
-        method: "POST",
-        body: { searchTerm },
-      }),
-    }),
-    getuserMessages: builder.query<Message[], number>({
+    getUserMessages: builder.query<{ messages: Message[] }, number>({
       query: (id) => ({
         url: `messages/get-messages`,
         method: "POST",
         body: { id },
       }),
     }),
-    getChannelMessages: builder.query<Message[], number>({
+    getUserChannel: builder.query<{ channel: Channel }, number>({
+      query: (channelId) => ({
+        url: `channel/get-user-channel`,
+        method: "GET",
+        params: { channelId },
+      }),
+    }),
+    getChannelMessages: builder.query<{ messages: Message[] }, number>({
       query: (channelId) => ({
         url: `channels/get-channel-messages/${channelId}`,
         method: "GET",
       }),
     }),
-    createChannel: builder.query<
-      Channel,
-      { name: string; members: User[]; avatar: string }
-    >({
-      query: ({ name, members, avatar }) => ({
-        url: `user/create-channel`,
-        method: "POST",
-        body: { name, members, avatar },
-      }),
-    }),
   }),
 });
 
+export function uploadFile(file: Blob) {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  return axios.post<{ fileUrl: string }>(
+    process.env.API + "messages/upload-file",
+    formData,
+    {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+}
+
+export function searchUsers(searchTerm: string) {
+  return axios.post<{ contacts: User[] }>(
+    `${process.env.API}contacts/search`,
+    { searchTerm },
+    {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+}
+
+export async function getUserInfo(ids: number[]): Promise<User[]> {
+  try {
+    const requests = ids.map((id) =>
+      axios.get<{ user: User }>(`${process.env.API}user/user-info`, {
+        params: { id },
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+    );
+
+    const responses = await Promise.allSettled(requests);
+    const users = responses
+      .filter((response) => response.status === "fulfilled")
+      .map(
+        (response) =>
+          (response as PromiseFulfilledResult<unknown>).value as AxiosResponse<{
+            user: User;
+          }>
+      )
+      .map((response) => response.data.user);
+
+    return users;
+  } catch (error) {
+    console.error("Error fetching user info:", error);
+    throw error;
+  }
+}
+export async function createChannel({
+  name,
+  members,
+  avatar,
+}: {
+  name: string;
+  members: User[];
+  avatar?: string;
+}): Promise<{ channel: Channel }> {
+  try {
+    const response = await axios.post<{ channel: Channel }>(
+      `${process.env.API}user/create-channel`,
+      { name, members, avatar },
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error creating channel:", error);
+    throw error;
+  }
+}
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
 export const {
-  useGetUserInfoQuery,
-  useCreateChannelQuery,
   useGetChannelMessagesQuery,
-  useGetuserMessagesQuery,
-  useGetAllContactsQuery,
+  useGetUserChannelQuery,
+  useGetUserMessagesQuery,
+  useGetUserInfoQuery,
 } = chatApi;

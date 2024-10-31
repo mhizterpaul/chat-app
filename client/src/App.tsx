@@ -23,7 +23,7 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
             <Route element={<ChatGuard />}>
-              <Route path="/new-chat" element={<NewChat />} />
+              <Route path="/new-chat/:type" element={<NewChat />} />
               <Route path="/chats" element={<Chats />} />
               <Route path="/messages/:type/:id" element={<MessageList />} />
             </Route>

@@ -3,10 +3,11 @@ import { MessageType } from "react-chat-elements";
 import { MessageList as MList, MessageBox } from "react-chat-elements";
 import { Message } from "../store/slices/chats/types";
 import {
-  useGetuserMessagesQuery,
+  useGetUserMessagesQuery,
   useGetChannelMessagesQuery,
   useGetUserInfoQuery,
 } from "../store/slices/api/actions";
+import { uploadFile } from "../store/slices/api/actions";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setActivePage } from "../store/slices/user/actions";
 import { RootState } from "../store";
@@ -16,7 +17,6 @@ import { Container, Popover, IconButton, Box } from "@mui/material";
 import { BsFillSendFill } from "react-icons/bs";
 import { ImAttachment } from "react-icons/im";
 import { GrEmoji } from "react-icons/gr";
-import axios from "axios";
 import InputBase from "@mui/material/InputBase";
 import EmojiPicker from "emoji-picker-react";
 import { useSocket } from "../context/socket";
@@ -66,31 +66,18 @@ function MessageList({ messageListItem }: { messageListItem: Message[] }) {
     let fileUrl;
     //upload file
     if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-
       try {
-        const result: { fileUrl: string } = await axios.post(
-          process.env.API + "messages/upload-file",
-          formData,
-          {
-            withCredentials: true,
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-
-        fileUrl = result.fileUrl;
-      } catch (error) {
-        console.error("Upload failed:", error);
+        const { data } = await uploadFile(file);
+        fileUrl = data.fileUrl;
+      } catch (e) {
+        console.log(e);
       }
     }
 
     if (type === "private") {
       const message: Message = {
         sender: user,
-        recipient: data,
+        recipient: data?.user,
         messageType: text.length > 0 ? "text" : "file",
         content: text,
         fileUrl,
@@ -245,15 +232,15 @@ function ChannelMessageList({ id }: { id: string }) {
   const dispatch = useAppDispatch();
   if (!data) return;
   dispatch(setActivePage({ name: "channel:" + id }));
-  return <MessageList messageListItem={data} />;
+  return <MessageList messageListItem={data.messages} />;
 }
 
 function PrivateMessageList({ id }: { id: string }) {
-  const { data } = useGetuserMessagesQuery(Number(id));
+  const { data } = useGetUserMessagesQuery(Number(id));
   const dispatch = useAppDispatch();
   if (!data) return;
   dispatch(setActivePage({ name: "private:" + id }));
-  return <MessageList messageListItem={data} />;
+  return <MessageList messageListItem={data.messages} />;
 }
 export default function MessageListContainer() {
   const { type, id } = useParams();
