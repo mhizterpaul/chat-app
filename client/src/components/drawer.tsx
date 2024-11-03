@@ -14,7 +14,6 @@ import { LuPlus } from "react-icons/lu";
 import { FaCaretDown } from "react-icons/fa";
 import EditIcon from "../components/ui/editIcon";
 import theme from "../theme";
-import * as React from "react";
 import Drawer from "@mui/material/Drawer";
 import { useParams } from "react-router-dom";
 import { useAppSelector } from "../store/hooks";
@@ -36,7 +35,7 @@ interface Props {
 function DrawerElement() {
   const { type, id } = useParams();
   const selector = (state: RootState) => state.account.user;
-  const channel = useGetUserChannelQueryWithDefault(Number(id));
+  const channel = useGetUserChannelQueryWithDefault(id as string);
   const user = useAppSelector(selector);
   if (type === "private") {
     if (!user) return null;
@@ -116,7 +115,9 @@ export default function ResponsiveDrawer(props: Props) {
   const { mobileOpen, handleDrawerTransitionEnd, handleDrawerClose } = props;
 
   const container =
-    window !== undefined ? () => window.document.getElementById("root") : undefined;
+    window !== undefined
+      ? () => window.document.getElementById("root")
+      : undefined;
   return (
     <Box
       component="nav"

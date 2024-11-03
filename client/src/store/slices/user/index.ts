@@ -27,8 +27,7 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setActivePage: (state, { type, payload }) => {
-      if (type !== "setActivePage") return;
+    setActivePage: (state, { payload }) => {
       state.activePage = payload;
     },
   },
@@ -52,7 +51,7 @@ const userSlice = createSlice({
       .addCase(actions.addProfileImage.fulfilled, (state, action) => {
         state.error = null;
         state.loading = "succeeded";
-        state.user = { ...state.user, image: action.payload.image } as User;
+        if (state.user) state.user.image = action.payload as string;
       })
       .addMatcher(
         isAnyOf(
@@ -101,4 +100,5 @@ const userSlice = createSlice({
   },
 });
 
+export const { setActivePage } = userSlice.actions;
 export default userSlice.reducer;

@@ -56,7 +56,7 @@ const Login: React.FC = function () {
         disabled={(!isValid && dirty) || !dirty || loading === "pending"}
         type="submit"
         variant="contained"
-        aria-labe="submit"
+        aria-label="submit"
         size="large"
       >
         Submit

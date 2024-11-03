@@ -25,16 +25,27 @@ import { MenuProps } from "../../utils/constants";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { RootState } from "../../store";
 import { useNavigate } from "react-router-dom";
+import { setActivePage } from "../../store/slices/user";
 import { User } from "../../store/slices/user/types";
+import {
+  addProfileImage,
+  removeProfileImage,
+  getUserInfo,
+} from "../../store/slices/user/actions";
 
 export default function EditProfile() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const selector = (state: RootState) => state.account;
   const account = useAppSelector(selector);
-  dispatch(action.setActivePage({ name: "profile" }));
+
   //Route Guard
-  if (!account.user) navigate("sign-on");
+  React.useEffect(() => {
+    if (!account.user) navigate("sign-on");
+    if (account.user?.profileSetup) navigate("/chats");
+    dispatch(setActivePage({ name: "profile" }));
+  }, [account.user, dispatch, navigate]);
+
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
@@ -68,7 +79,7 @@ export default function EditProfile() {
     onSubmit: (values, { resetForm }) => {
       const _user = account.user as User;
       const Values = Object(values);
-      const name = Values.name.split(",");
+      const name = Values.name.split(" ");
       delete Values["name"];
       dispatch(
         action.updateProfile({
@@ -78,7 +89,10 @@ export default function EditProfile() {
           ...Values,
         })
       );
-      if (account.loading === "succeeded") resetForm({ values });
+      if (account.loading === "succeeded") {
+        dispatch(getUserInfo());
+        resetForm({ values });
+      }
     },
   });
 
@@ -123,15 +137,43 @@ export default function EditProfile() {
             }}
             className=" [&_ul>*:active]:font-bold [&_ul>*:hover]:font-bold mt-2 ml-[6.25%]"
           >
-            <MenuItem onClick={handleClose}>Delete Avatar</MenuItem>
-            <MenuItem onClick={handleClose}>Upload from Gallery</MenuItem>
+            <input
+              accept="image/*"
+              style={{ display: "none" }}
+              id="profile-upload"
+              name="image"
+              type="file"
+              onChange={async (event) => {
+                const file = event.target.files?.[0];
+                if (file) {
+                  handleClose();
+                  try {
+                    await dispatch(addProfileImage(file));
+                  } catch (e) {
+                    console.log(e);
+                  }
+                }
+              }}
+            />
+
+            <MenuItem
+              onClick={() => {
+                dispatch(removeProfileImage());
+                handleClose();
+              }}
+            >
+              Delete Avatar
+            </MenuItem>
+            <label htmlFor="profile-upload">
+              <MenuItem>Upload from Gallery</MenuItem>
+            </label>
             <MenuItem onClick={handleClose}>Take a photo</MenuItem>
           </Menu>
         </Box>
         <Box
           component="form"
           noValidate
-          className=" flex flex-col pl-4 [&>div:not(:first-child)]:w-full [&>div:not(:first-child)]:max-w-96 gap-y-6 items-start content-center justify-between w-full max-w-xl"
+          className=" flex flex-col pl-4 ml-4 sm:ml-20 [&>div:not(:first-child)]:w-full [&>div:not(:first-child)]:max-w-96 gap-y-6 items-start content-center justify-between w-full max-w-xl"
           onSubmit={handleSubmit}
         >
           <Box className=" [&>*]:inline-block text-nowrap ">
@@ -249,7 +291,7 @@ export default function EditProfile() {
             <MenuItem value="Homepage">
               <PiSquaresFourLight /> <Typography>Homepage</Typography>
             </MenuItem>
-            {["chat list", "status"].map((name) => (
+            {["Chats", "Status"].map((name) => (
               <MenuItem key={name} value={name}>
                 {name}
               </MenuItem>

@@ -1,7 +1,6 @@
-import express from "express";
 require("dotenv").config();
-const socket = require("socket.io");
-const cors = require("cors");
+import express from "express";
+import cors from "cors";
 import cookieParser from "cookie-parser";
 import openDatabaseConnection from "./config";
 import setUpSocket from "./socket";
@@ -12,7 +11,7 @@ const port = process.env.PORT || 3000;
 
 app.use(
   cors({
-    origin: [process.env.ORIGIN],
+    origin: [process.env.ORIGIN || ""],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   })
@@ -25,7 +24,7 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.use("/api/channel", Routes.channelRoute);
+app.use("/api/channels", Routes.channelRoute);
 app.use("/api/contacts", Routes.contactRoute);
 app.use("/api/messages", Routes.messageRoute);
 app.use("/api/user", Routes.userRoute);

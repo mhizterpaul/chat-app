@@ -7,8 +7,8 @@ interface State {
   channelList: Channel[];
   dmList: Contact[];
   error: { message: string } | null;
-  contacts: { label: string; id: number; avatar: string }[];
-  messages: (Message & { channelId?: number })[];
+  contacts: { label: string; id: string; avatar: string }[];
+  messages: (Message & { channelId?: string })[];
   loading: "idle" | "succeeded" | "failed" | "pending";
 }
 const initialState = {
@@ -20,16 +20,14 @@ const initialState = {
   loading: "idle",
 } as State;
 
-const userSlice = createSlice({
+const chatSlice = createSlice({
   name: "contacts",
   initialState,
   reducers: {
-    addMessage: (state, { type, payload }) => {
-      if (type !== "addMessage") return;
+    addMessage: (state, { payload }) => {
       state.messages = [...state.messages, payload];
     },
-    removeMessage: (state, { type, payload }) => {
-      if (type !== "removeMessage") return;
+    removeMessage: (state, { payload }) => {
       state.messages = state.messages.filter(
         (message: Message) => message.timeStamp !== payload.timeStamp
       );
@@ -87,4 +85,5 @@ const userSlice = createSlice({
   },
 });
 
-export default userSlice.reducer;
+export default chatSlice.reducer;
+export const { addMessage, removeMessage } = chatSlice.actions;

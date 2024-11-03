@@ -37,6 +37,7 @@ export default function Navbar({ children }: Props) {
       <AppBar
         position="static"
         className="shadow-lg"
+        component="nav"
         sx={
           {
             //width: { sm: `calc(100% - ${drawerWidth})` },
@@ -46,12 +47,13 @@ export default function Navbar({ children }: Props) {
       >
         <Toolbar sx={{ justifyContent: "space-between" }}>
           <IconButton onClick={() => navigate(-1)}>
-            <IoIosArrowRoundBack onClick={() => navigate(-1)} />
+            <IoIosArrowRoundBack />
           </IconButton>
           <Box className="flex place-items-center ">
             {icon}
             <Typography className=" capitalize text-nowrap " variant="h4">
-              {titleMap[name] || name}\n
+              {titleMap[name] || name}
+              {"\n"}
               {description ? (
                 <Typography variant="body2" sx={{ color: "text.secondary" }}>
                   {description}

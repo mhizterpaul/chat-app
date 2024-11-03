@@ -30,7 +30,8 @@ import Contacts from "../components/contacts";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { User } from "../store/slices/user/types";
 import { useAppDispatch } from "../store/hooks";
-import { setActivePage } from "../store/slices/user/actions";
+import { setActivePage } from "../store/slices/user";
+import { useParams } from "react-router-dom";
 
 export type ChannelData = {
   name: string;
@@ -39,7 +40,8 @@ export type ChannelData = {
 };
 function NewConversation() {
   const containerRef = React.useRef(null);
-  const [value, setValue] = React.useState("0");
+  const { type } = useParams();
+  const [value, setValue] = React.useState(type === "channel" ? "0" : "1");
   const handleTab = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
@@ -50,18 +52,20 @@ function NewConversation() {
     members: [],
   });
   const dispatch = useAppDispatch();
-  dispatch(setActivePage({ name: "new-chat" }));
+  React.useEffect(() => {
+    dispatch(setActivePage({ name: "new-chat" }));
+  }, [dispatch]);
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
   };
   const [selectContacts, setSelectContacts] = React.useState(false);
   const handleSetChannel = async (
     key: keyof ChannelData,
-    value: ChannelData[keyof ChannelData] | number[]
+    value: ChannelData[keyof ChannelData] | string[]
   ) => {
     if (key === "members") {
       try {
-        const members = await getUserInfo(value as number[]);
+        const members = await getUserInfo(value as string[]);
         setChannel((prev) => ({ ...prev, members }));
       } catch (e) {
         console.log(e);
@@ -263,7 +267,7 @@ function NewConversation() {
                       sx={{
                         position: "absolute",
                         left: "1rem",
-                        top: 0,
+                        top: -10,
                         color: "text.secondary",
                       }}
                     >

@@ -12,28 +12,28 @@ export const chatApi = createApi({
     credentials: "include",
   }),
   endpoints: (builder) => ({
-    getUserInfo: builder.query<{ user: User }, number>({
+    getUserInfo: builder.query<{ user: User }, string>({
       query: (id) => ({
         url: `user/user-info`,
         method: "GET",
         params: { id },
       }),
     }),
-    getUserMessages: builder.query<{ messages: Message[] }, number>({
+    getUserMessages: builder.query<{ messages: Message[] }, string>({
       query: (id) => ({
         url: `messages/get-messages`,
         method: "POST",
         body: { id },
       }),
     }),
-    getUserChannel: builder.query<{ channel: Channel }, number>({
+    getUserChannel: builder.query<{ channel: Channel }, string>({
       query: (channelId) => ({
-        url: `channel/get-user-channel`,
+        url: `channels/get-user-channel`,
         method: "GET",
         params: { channelId },
       }),
     }),
-    getChannelMessages: builder.query<{ messages: Message[] }, number>({
+    getChannelMessages: builder.query<{ messages: Message[] }, string>({
       query: (channelId) => ({
         url: `channels/get-channel-messages/${channelId}`,
         method: "GET",
@@ -71,7 +71,7 @@ export function searchUsers(searchTerm: string) {
   );
 }
 
-export async function getUserInfo(ids: number[]): Promise<User[]> {
+export async function getUserInfo(ids: string[]): Promise<User[]> {
   try {
     const requests = ids.map((id) =>
       axios.get<{ user: User }>(`${API}user/user-info`, {
@@ -111,7 +111,7 @@ export async function createChannel({
 }): Promise<{ channel: Channel }> {
   try {
     const response = await axios.post<{ channel: Channel }>(
-      `${API}user/create-channel`,
+      `${API}channels/create-channel`,
       { name, members, avatar },
       {
         withCredentials: true,
@@ -135,7 +135,7 @@ export const {
   useGetUserInfoQuery,
 } = chatApi;
 
-export const useGetUserChannelQueryWithDefault = (id: number) => {
+export const useGetUserChannelQueryWithDefault = (id: string) => {
   const data = useGetUserChannelQuery(id);
   if (data.data?.channel.avatar !== undefined)
     return { ...data.data.channel, avatar: group };

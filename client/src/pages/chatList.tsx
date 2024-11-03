@@ -3,20 +3,25 @@ import { useAppSelector, useAppDispatch } from "../store/hooks";
 import { RootState } from "../store";
 import action from "../store/slices/chats/actions";
 import { Channel, Contact } from "../store/slices/chats/types";
-import avatar from "../assets/avatar.png";
-import group from "../assets/group.svg"
+import avatar from "../assets/avatar.avif";
+import group from "../assets/group.svg";
+import { Box } from "@mui/material";
 import BottomNavigation from "../components/bottomNavigation";
 import { useNavigate } from "react-router-dom";
-import {setActivePage} from "../store/slices/user/actions"
+import { setActivePage } from "../store/slices/user";
+import * as React from "react";
 
 export default function ChatList() {
   const selector = (state: RootState) => state.chats;
   const dispatch = useAppDispatch();
   dispatch(action.getChannels());
   dispatch(action.getDmList());
-  dispatch(setActivePage({name: "chats"}))
   const chats = useAppSelector(selector);
   const navigate = useNavigate();
+  React.useEffect(() => {
+    dispatch(setActivePage({ name: "chats" }));
+  }, [dispatch]);
+
   const chatList = [
     ...chats.channelList.map((channel: Channel) => ({
       id: channel._id,
@@ -42,12 +47,16 @@ export default function ChatList() {
 
   return (
     <>
-      <ChtList
-        className="chat-list"
-        dataSource={chatList}
-        id="chat-list"
-        lazyLoadingImage=""
-      />
+      {chatList.length ? (
+        <ChtList
+          className="chat-list"
+          dataSource={chatList}
+          id="chat-list"
+          lazyLoadingImage=""
+        />
+      ) : (
+        <Box sx={{ width: "full", height: "75vh" }}></Box>
+      )}
       <BottomNavigation />
     </>
   );

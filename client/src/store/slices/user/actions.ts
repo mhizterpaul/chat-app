@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { IActivePage, LoginInfo, SignupInfo, User } from "./types";
+import { LoginInfo, SignupInfo, User } from "./types";
 import { API } from "../../../utils/constants";
 
 export const signup = createAsyncThunk(
@@ -10,6 +10,7 @@ export const signup = createAsyncThunk(
       headers: {
         "Content-Type": "application/json",
       },
+      withCredentials: true,
     });
     console.log(response.data);
 
@@ -27,7 +28,7 @@ export const getUserInfo = createAsyncThunk("user/userInfo", async () => {
 export const removeProfileImage = createAsyncThunk(
   "user/remove-profile-image",
   async () => {
-    const response = await axios.post(API + "user/remove-profile-image", {
+    const response = await axios.delete(API + "user/remove-profile-image", {
       withCredentials: true,
     });
     return response.data.message;
@@ -73,6 +74,7 @@ export const login = createAsyncThunk(
       headers: {
         "Content-Type": "application/json",
       },
+      withCredentials: true,
     });
     return response.data.user;
   }
@@ -83,18 +85,12 @@ export const logout = createAsyncThunk("user/logout", async () => {
   return response.data.message;
 });
 
-export const setActivePage = (payload: IActivePage) => ({
-  type: "setActivePage",
-  payload,
-});
-
 export default {
   login,
   logout,
   signup,
   updateProfile,
   getUserInfo,
-  setActivePage,
   removeProfileImage,
   addProfileImage,
 };

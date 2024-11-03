@@ -1,9 +1,8 @@
 import { Response } from "express";
 import Messages from "../models/messages";
 import { RequestWithId } from "./users";
-import { Storage } from "megajs";
+import Storage from "../services/storage";
 
-const { MEGA_USERNAME, MEGA_PASSWORD } = process.env;
 export async function getMessages(request: RequestWithId, response: Response) {
   try {
     const user1 = request.userId;
@@ -27,27 +26,31 @@ export async function getMessages(request: RequestWithId, response: Response) {
   }
 }
 export async function uploadFile(request: RequestWithId, response: Response) {
-  const storage = new Storage({
-    email: MEGA_USERNAME || "",
-    password: MEGA_PASSWORD || "",
-    autologin: true,
-  });
   try {
     const file = request.file as Express.Multer.File;
     if (!file) {
       response.status(400).json({ message: "file is required" });
       return;
     }
-    const uploadStream = storage.upload({
+    if (!Storage.ready) {
+      response.status(500).json({ message: "Storage is not ready" });
+      return;
+    }
+    const uploadStream = Storage.upload({
       name: file.originalname,
       size: file.size,
     });
     uploadStream.end(file.buffer);
-    let data = { filePath: "" };
+
     uploadStream.on("complete", async (file) => {
-      data.filePath = await file.link({ noKey: true });
+      const fileUrl = await file.link({ noKey: false });
+      response.status(200).json({ fileUrl });
     });
-    response.status(200).json(data);
+
+    uploadStream.on("error", (err) => {
+      response.status(500).json({ message: "Upload failed" });
+      console.log(err.message);
+    });
     return;
   } catch (e) {
     console.log(e);

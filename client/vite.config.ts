@@ -2,7 +2,6 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 import dotenv from "dotenv";
-
 // https://vitejs.dev/config/
 const envDir = path.resolve(__dirname);
 dotenv.config({ path: path.join(envDir, ".env") });

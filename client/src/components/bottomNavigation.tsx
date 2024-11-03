@@ -2,7 +2,7 @@ import * as React from "react";
 import { Box, BottomNavigation, BottomNavigationAction } from "@mui/material";
 import ProfileIcon from "../components/ui/profileIcon";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { setActivePage } from "../store/slices/user/actions";
+import { setActivePage } from "../store/slices/user";
 import { RootState } from "../store";
 import { useNavigate } from "react-router-dom";
 export default function SimpleBottomNavigation() {
@@ -11,6 +11,14 @@ export default function SimpleBottomNavigation() {
   const [value, setValue] = React.useState(activePage.name);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [page, setPage] = React.useState("chats");
+  React.useEffect(() => {
+    if (page === "new-chat") {
+      navigate("/new-chat/private");
+      return;
+    }
+    navigate("/" + page);
+  }, [page, navigate]);
   return (
     <Box sx={{ marginTop: "2.5rem" }}>
       <BottomNavigation
@@ -19,7 +27,7 @@ export default function SimpleBottomNavigation() {
         onChange={(event, newValue) => {
           setValue(newValue);
           dispatch(setActivePage({ name: newValue }));
-          navigate("/" + newValue);
+          setPage(newValue);
         }}
         className=" relative flex content-between "
       >

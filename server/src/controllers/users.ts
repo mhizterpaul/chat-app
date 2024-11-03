@@ -4,25 +4,20 @@ import signupSchema from "../../../shared/schemas/signup";
 import Users from "../models/users";
 import jwt from "jsonwebtoken";
 import z from "../../../shared/node_modules/zod";
-import { Storage } from "megajs";
+import Storage from "../services/storage";
+import crypto from "node:crypto";
 
 export interface RequestWithId extends Request {
   userId?: string;
 }
 
-const crypto = require("crypto");
 const maxAge = 3 * 24 * 24 * 60 * 60 * 1000;
-const { ALGORITHM, JWT_KEY, MEGA_USERNAME, MEGA_PASSWORD } = process.env;
-const KEY = crypto.randomBytes(32);
-const IV = crypto.randomBytes(16);
+const { JWT_KEY } = process.env;
 const createToken = (email: string, userId: string) => {
   const text = jwt.sign({ email, userId }, JWT_KEY || "", {
     expiresIn: maxAge,
   });
-  const cipher = crypto.createCipheriv(ALGORITHM, KEY, IV);
-  let encrypted = cipher.update(text, "utf8", "hex");
-  encrypted += cipher.final("hex");
-  return encrypted;
+  return text;
 };
 
 export const signup = async function (
@@ -169,38 +164,41 @@ export async function addProfileImage(
   request: RequestWithId,
   response: Response
 ) {
-  const storage = new Storage({
-    email: MEGA_USERNAME || "",
-    password: MEGA_PASSWORD || "",
-    autologin: true,
-  });
   try {
     const file = request.file as Express.Multer.File;
     if (!file) {
       response.status(400).json({ message: "file is required" });
       return;
     }
-    const uploadStream = storage.upload({
+    if (!Storage.ready) {
+      response.status(500).json({ message: "Storage is not ready" });
+      return;
+    }
+    const uploadStream = Storage.upload({
       name: file.originalname,
       size: file.size,
     });
     uploadStream.end(file.buffer);
-    const data = { image: "" };
+
     uploadStream.on("complete", async (file) => {
-      data.image = await file.link({ noKey: true });
+      const image = await file.link({ noKey: false });
+      const updatedUser = await Users.findOneAndUpdate(
+        { _id: request.userId },
+        {
+          image,
+        },
+        { new: true, runValidators: true }
+      );
+      response.status(200).json({ image });
     });
-    const updatedUser = await Users.findOneAndUpdate(
-      { id: request.userId },
-      {
-        image: data.image,
-      },
-      { new: true, runValidators: true }
-    );
-    storage.close();
-    response.status(200).json({ image: updatedUser?.image });
+
+    uploadStream.on("error", (err) => {
+      response.status(500).json({ message: "Upload failed" });
+      console.log(err.message);
+    });
+    return;
   } catch (e) {
     console.log(e);
-    storage.close();
     response.json(500).json({ message: "something unexpected happened" });
     return;
   }
@@ -210,30 +208,28 @@ export async function removeProfileImage(
   request: RequestWithId,
   response: Response
 ) {
-  const storage = new Storage({
-    email: MEGA_USERNAME || "",
-    password: MEGA_PASSWORD || "",
-    autologin: true,
-  });
   try {
     const userData = await Users.findById(request.userId);
     if (!userData) {
       response.status(404).json({ message: "user with given id not found" });
       return;
     }
+    if (!Storage.ready) {
+      response.status(500).json({ message: "Storage is not ready" });
+      return;
+    }
     const fileId = userData.image?.split("/file/")[1].split("#")[0];
-    const file = storage.files[fileId || ""];
+    const file = Storage.files[fileId || ""];
     await file.delete();
     userData.image = null;
     userData.save();
-    storage.close();
     response
       .status(204)
       .json({ message: "profile image removed successfully" });
+
     return;
   } catch (e) {
     console.log(e);
-    storage.close();
     response.status(500).json({ message: "something unexpected happened" });
     return;
   }

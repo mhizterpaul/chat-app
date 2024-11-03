@@ -21,7 +21,7 @@ type Props = {
   open: boolean;
   setChannel: (
     key: keyof ChannelData,
-    value: ChannelData[keyof ChannelData] | number[]
+    value: ChannelData[keyof ChannelData] | string[]
   ) => unknown;
 };
 
@@ -73,7 +73,7 @@ export default function SwipeableEdgeDrawer(props: Props) {
               accept="image/*"
               style={{ display: "none" }}
               id="file-upload"
-              name="file"
+              name="image"
               type="file"
               onChange={async (event) => {
                 const file = event.target.files?.[0];

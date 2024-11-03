@@ -1,5 +1,7 @@
 import * as React from "react";
 import { MobileContext } from "../context/mobile";
+import { SocketContext } from "../context/socket";
+
 export const customStyle = {
   width: "21rem",
 };
@@ -18,3 +20,7 @@ export const MenuProps = {
 };
 
 export const API = import.meta.env.VITE_API;
+export const SOCKET_HOST = import.meta.env.VITE_SOCKET_HOST;
+export function useSocket() {
+  return React.useContext(SocketContext);
+}

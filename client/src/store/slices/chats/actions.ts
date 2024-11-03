@@ -1,43 +1,30 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { Message } from "./types";
 import { API } from "../../../utils/constants";
 
 export const getChannels = createAsyncThunk("chats/getChannels", async () => {
-  const response = await axios.get(API + "/get-user-channels", {
+  const response = await axios.get(API + "channels/get-user-channels", {
     withCredentials: true,
   });
   return response.data.channels;
 });
 
 export const getDmList = createAsyncThunk("chats/getDmList", async () => {
-  const response = await axios.get(API + "/get-contacts-for-dm", {
+  const response = await axios.get(API + "contacts/get-contacts-for-dm", {
     withCredentials: true,
   });
   return response.data.contacts;
 });
 
 export const getContacts = createAsyncThunk("chats/getContacts", async () => {
-  const response = await axios.get(API + "/get-all-contacts", {
+  const response = await axios.get(API + "contacts/get-all-contacts", {
     withCredentials: true,
   });
   return response.data.contacts;
-});
-
-export const addMessage = (payload: Message) => ({
-  type: "addMessage",
-  payload,
-});
-
-export const removeMessage = (payload: Message) => ({
-  type: "removeMessage",
-  payload,
 });
 
 export default {
   getChannels,
   getDmList,
   getContacts,
-  addMessage,
-  removeMessage,
 };

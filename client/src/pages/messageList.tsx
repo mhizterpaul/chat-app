@@ -10,7 +10,7 @@ import {
 } from "../store/slices/api/actions";
 import { uploadFile } from "../store/slices/api/actions";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { setActivePage } from "../store/slices/user/actions";
+import { setActivePage } from "../store/slices/user";
 import { RootState } from "../store";
 import { useParams } from "react-router-dom";
 import { User } from "../store/slices/user/types";
@@ -21,9 +21,8 @@ import { GrEmoji } from "react-icons/gr";
 import InputBase from "@mui/material/InputBase";
 import EmojiPicker from "emoji-picker-react";
 import Drawer from "../components/drawer";
-import { useSocket } from "../context/socket";
-import { removeMessage } from "../store/slices/chats/actions";
-import { useMobile } from "../utils/constants";
+import { useSocket, useMobile } from "../utils/constants";
+import { removeMessage } from "../store/slices/chats";
 
 const messageListMap =
   (user: User) =>
@@ -65,7 +64,7 @@ function MessageList({ messageListItem }: { messageListItem: Message[] }) {
   };
   const [messageQ, setMessageQ] = React.useState<Message[]>([]);
   const { type, id } = useParams();
-  const { data } = useGetUserInfoQuery(Number(id));
+  const { data } = useGetUserInfoQuery(id as string);
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -106,8 +105,8 @@ function MessageList({ messageListItem }: { messageListItem: Message[] }) {
       socket?.emit("sendMessage", message);
       setMessageQ((prev) => [...prev, message]);
     } else {
-      const message: Message & { channelId: number } = {
-        channelId: Number(id),
+      const message: Message & { channelId: string } = {
+        channelId: id as string,
         sender: user,
         messageType: text.length > 0 ? "text" : "file",
         content: text,
@@ -134,7 +133,7 @@ function MessageList({ messageListItem }: { messageListItem: Message[] }) {
   };
 
   //handle new messages
-  if (messages?.[0].recipient?.id === id || messages?.[0].channelId === id) {
+  if (messages?.[0]?.recipient?.id === id || messages?.[0]?.channelId === id) {
     setMessageQ((prev) => [...prev, messages[0]]);
     dispatch(removeMessage(messages[0]));
   }
@@ -175,7 +174,11 @@ function MessageList({ messageListItem }: { messageListItem: Message[] }) {
           }}
         />
       ))}
-      <Box component="form" onSubmit={handleSubmit}>
+      <Box
+        component="form"
+        className="flex items-center content-center jusitfy-between pl-8"
+        onSubmit={handleSubmit}
+      >
         <input
           accept="*"
           style={{ display: "none" }}
@@ -184,18 +187,13 @@ function MessageList({ messageListItem }: { messageListItem: Message[] }) {
           type="file"
         />
         <label htmlFor="file-upload">
-          <IconButton
-            sx={{ p: "10px" }}
-            component="input"
-            aria-label="attachment"
-            type="file"
-          >
+          <IconButton sx={{ p: "10px" }} aria-label="attachment">
             <ImAttachment />
           </IconButton>
         </label>
-        <Box>
+        <Box className="w-[50%] ">
           <InputBase
-            sx={{ ml: 1, flex: 1 }}
+            sx={{ ml: 1, flex: 1, width: "85%" }}
             placeholder="Type here..."
             ref={inputRef}
             name="text"
@@ -248,29 +246,36 @@ function MessageList({ messageListItem }: { messageListItem: Message[] }) {
 
 function ChannelMessageList({ id }: { id: string }) {
   const dispatch = useAppDispatch();
-  const channelMessages = useGetChannelMessagesQuery(Number(id));
+  const channelMessages = useGetChannelMessagesQuery(id);
 
-  const channelData = useGetUserChannelQueryWithDefault(Number(id));
-
+  const channelData = useGetUserChannelQueryWithDefault(id);
+  React.useEffect(() => {
+    if (channelData && channelMessages.data)
+      dispatch(
+        setActivePage({
+          name: channelData.name || "",
+          icon: channelData.avatar,
+          description: `${channelData.members.length} members`,
+        })
+      );
+  }, [dispatch, channelMessages.data, channelData]);
   if (!channelData || !channelMessages.data) return;
-  dispatch(
-    setActivePage({
-      name: channelData.name || "",
-      icon: channelData.avatar,
-      description: `${channelData.members.length} members`,
-    })
-  );
+
   return <MessageList messageListItem={channelMessages.data?.messages} />;
 }
 
 function PrivateMessageList({ id }: { id: string }) {
-  const { data } = useGetUserMessagesQuery(Number(id));
+  const { data } = useGetUserMessagesQuery(id);
   const selector = (state: RootState) => state.chats.contacts;
   const contacts = useAppSelector(selector);
   const contact = contacts.filter((_contact) => String(_contact.id) === id)[0];
   const dispatch = useAppDispatch();
+  React.useEffect(() => {
+    if (data)
+      dispatch(setActivePage({ name: contact.label, icon: contact.avatar }));
+  }, [data, dispatch, contact]);
+
   if (!data) return;
-  dispatch(setActivePage({ name: contact.label, icon: contact.avatar }));
   return <MessageList messageListItem={data.messages} />;
 }
 export default function MessageListContainer() {

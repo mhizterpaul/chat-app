@@ -21,7 +21,7 @@ import { RootState } from "../store/";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { useNavigate } from "react-router-dom";
 import { User } from "../store/slices/user/types";
-import { setActivePage } from "../store/slices/user/actions";
+import { setActivePage } from "../store/slices/user";
 
 const stackItemStyle = {
   marginLeft: "auto",
@@ -47,10 +47,11 @@ export default function Settings() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [navigateToProfile, setNavigateToProfile] = React.useState(false);
-  dispatch(setActivePage({ name: "settings" }));
+
   React.useEffect(() => {
     if (navigateToProfile) navigate("/profile");
-  }, [navigateToProfile, navigate]);
+    dispatch(setActivePage({ name: "settings" }));
+  }, [navigateToProfile, navigate, dispatch]);
   return (
     <>
       <Container

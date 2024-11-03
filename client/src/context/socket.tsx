@@ -4,17 +4,14 @@ import * as React from "react";
 import { io, Socket } from "socket.io-client";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 import { Message } from "../store/slices/chats/types";
-import { addMessage } from "../store/slices/chats/actions";
-import { API } from "../utils/constants";
+import { addMessage } from "../store/slices/chats";
+import { SOCKET_HOST } from "../utils/constants";
 
-const SocketContext = React.createContext<null | Socket<
+export const SocketContext = React.createContext<null | Socket<
   DefaultEventsMap,
   DefaultEventsMap
 >>(null);
 
-export function useSocket() {
-  return React.useContext(SocketContext);
-}
 export default function SocketProvider({
   children,
 }: {
@@ -29,7 +26,7 @@ export default function SocketProvider({
   const user = useAppSelector(selector);
   React.useEffect(() => {
     if (user) {
-      socket.current = io(API || "", {
+      socket.current = io(SOCKET_HOST, {
         withCredentials: true,
         query: { userid: user.id },
       });

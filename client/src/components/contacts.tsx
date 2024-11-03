@@ -10,7 +10,6 @@ import {
   Button,
   Checkbox,
   Container,
-  Box,
   Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -26,27 +25,35 @@ type Props = {
   selectContacts?: (state: boolean) => unknown;
   setChannel?: (
     key: keyof ChannelData,
-    value: ChannelData[keyof ChannelData] | number[]
+    value: ChannelData[keyof ChannelData] | string[]
   ) => unknown;
 };
 
 function SelectMembers({ type, setChannel, selectContacts }: Props) {
-  const [personName, setPersonName] = React.useState<number[]>([]);
+  const [personName, setPersonName] = React.useState<string[]>([]);
   const selector = (state: RootState) => state.chats.contacts;
   const contacts = useAppSelector(selector);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  dispatch(getContacts());
   const [search, setSearch] = React.useState<User[]>([]);
+  const [startTransition, setStartTransition] = React.useState("");
+
+  React.useEffect(() => {
+    if (type === "private" && startTransition.length) {
+      navigate("/messages/private/" + startTransition);
+    }
+    setTimeout(() => !contacts.length && dispatch(getContacts()), 2000);
+  }, [type, contacts, navigate, dispatch, startTransition]);
+
   const handleChange = (event: React.SyntheticEvent) => {
     const target = event.target as HTMLElement;
-    const valueElement =
-      target.parentElement?.parentElement?.getAttribute("value");
-    const value = Number(valueElement);
-    if (!valueElement) return;
+    const value = target.parentElement?.parentElement?.getAttribute("value");
+
+    if (!value) return;
+    
     if (type === "private" && contacts.length > 0) {
       const id = contacts.filter((contact) => contact.id === value)[0].id;
-      navigate("/messages/private/" + id);
+      setStartTransition(id);
     }
     const idx = personName.indexOf(value);
     setPersonName((curr) =>
@@ -67,12 +74,11 @@ function SelectMembers({ type, setChannel, selectContacts }: Props) {
               ),
             },
           }}
-          placeholder="find members"
+          placeholder={type === "channel" ? "find members" : "search for users"}
           type="name"
           name="name"
           variant="outlined"
           aria-label="name"
-          value={"some value"}
           onChange={async ({ target: { value } }) => {
             let processing;
             if (value.length > 4 && !processing) {
@@ -88,15 +94,18 @@ function SelectMembers({ type, setChannel, selectContacts }: Props) {
           }}
         />
         {type === "private" ? (
-          <Box onClick={() => navigate("/new-chat/" + type)}>
+          <Button
+            sx={{ mt: "1rem" }}
+            onClick={() => navigate("/new-chat/channel")}
+          >
             <Typography>Create New Channel</Typography>
-          </Box>
+          </Button>
         ) : null}
         <MenuList
           onClick={handleChange}
           className=" mt-6 overflow-y-scroll overflow-x-hidden"
         >
-          {search
+          {search.length
             ? search.map(({ firstName, lastName, image, id }) => (
                 <MenuItem
                   key={id}
@@ -111,12 +120,12 @@ function SelectMembers({ type, setChannel, selectContacts }: Props) {
                       marginRight: "1.25rem",
                     }}
                     className={`${
-                      personName.includes(Number(id)) ? "ring-1 ring-[#4ab6f7]" : ""
+                      personName.includes(id) ? "ring-1 ring-[#4ab6f7]" : ""
                     }`}
                   />
                   <ListItemText primary={`${firstName} ${lastName}`} />
                   {type === "channel" ? (
-                    <Checkbox checked={personName.includes(Number(id))} />
+                    <Checkbox checked={personName.includes(id)} />
                   ) : null}
                 </MenuItem>
               ))
