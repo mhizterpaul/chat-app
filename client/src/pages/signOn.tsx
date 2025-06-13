@@ -23,7 +23,7 @@ export default function SignOn() {
   }, [user, navigate]);
 
   const [value, setValue] = React.useState("0");
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+  const handleChange = (_: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
   return (
