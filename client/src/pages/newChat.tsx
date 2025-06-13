@@ -150,11 +150,8 @@ function NewConversation() {
                 width: "25%",
                 transition: 'box-shadow 0.2s, border 0.2s',
               },
-              "& .MuiSnackbarContent-root": {
-                marginLeft: "5rem",
-              },
               "& .MuiSnackbarContent-message": {
-                marginLeft: "2.5rem",
+                transform: "translateX(6rem);",
                 color: theme.palette.green.main,
               },
               "& span.MuiTabs-indicator": {
