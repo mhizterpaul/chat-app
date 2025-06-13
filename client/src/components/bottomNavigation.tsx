@@ -14,13 +14,15 @@ export default function SimpleBottomNavigation() {
   const navigate = useNavigate();
   const location = useLocation();
   const [page, setPage] = React.useState(activePage.name);
+  const [_navigate, setNavigate] = React.useState(false);
 
   React.useEffect(() => {
     if (page === "new-chat") {
       navigate("/new-chat/private");
       return;
     }
-    if (location.pathname !== "/" + page) navigate("/" + page);
+    if (location.pathname !== "/" + page && _navigate) navigate("/" + page);
+    setNavigate(false);
   }, [page, navigate]);
 
   return (
@@ -29,6 +31,7 @@ export default function SimpleBottomNavigation() {
         showLabels
         value={page}
         onChange={(_, newValue) => {
+          setNavigate(true);
           setPage(newValue);
           dispatch(setActivePage({ name: newValue }));
         }}

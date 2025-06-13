@@ -43,7 +43,11 @@ export default function EditProfile() {
   //Route Guard
   React.useEffect(() => {
     if (!account.user && import.meta.env.VITE_ENV === "production") navigate("sign-on");
-    if (account.user?.profileSetup) navigate("/chats");
+
+    if (account.user?.profileSetup) {
+      navigate("/chats");
+      return;
+    }
     dispatch(setActivePage({ name: "profile" }));
   }, [account.user, dispatch, navigate]);
 

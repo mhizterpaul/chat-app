@@ -17,10 +17,11 @@ export default function ChatList() {
   const chats = useAppSelector(selector);
   const navigate = useNavigate();
 
+
   React.useEffect(() => {
-    dispatch(setActivePage({ name: "chats" }));
     dispatch(action.getChannels());
     dispatch(action.getDmList());
+    dispatch(setActivePage({ name: "chats" }));
   }, [dispatch]);
 
   const chatList = [

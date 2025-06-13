@@ -4,11 +4,12 @@ import { IoIosMenu, IoIosArrowRoundBack } from "react-icons/io";
 import { PiDotsThreeBold } from "react-icons/pi";
 import { LiaTimesSolid } from "react-icons/lia";
 //import { drawerWidth } from "./drawer";
-import { useAppSelector } from "../store/hooks";
+import { useAppSelector, useAppDispatch } from "../store/hooks";
 import { RootState } from "../store";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { useMobile } from "../utils/constants";
+import { setActivePage } from "../store/slices/user";
 type Props = {
   children?: React.ReactNode;
 };
@@ -25,6 +26,8 @@ export default function Navbar({ children }: Props) {
   const selector = (state: RootState) => state.account.activePage;
   const { name, description, icon } = useAppSelector(selector);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const location = useLocation();
   const { isClosing, setMobileOpen, mobileOpen } = useMobile();
   const handleDrawerToggle = () => {
     if (!isClosing) {
@@ -46,7 +49,10 @@ export default function Navbar({ children }: Props) {
         }
       >
         <Toolbar sx={{ justifyContent: "space-between" }}>
-          <IconButton onClick={() => navigate(-1)}>
+          <IconButton onClick={() => {
+            navigate(-1);
+            dispatch(setActivePage(location.pathname));
+          }}>
             <IoIosArrowRoundBack />
           </IconButton>
           <Box className="flex place-items-center ">
@@ -94,7 +100,12 @@ export default function Navbar({ children }: Props) {
                 size="large"
                 edge="start"
                 color="inherit"
-                onClick={() => name === "new-chat" && navigate("/chats")}
+                onClick={() => {
+                  if (name === "new-chat") {
+                    dispatch(setActivePage({ name: "chats" }))
+                    navigate("/chats")
+                  }
+                }}
                 sx={{ mr: 2, color: "text.secondary" }}
               >
                 {icon}

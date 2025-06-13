@@ -50,7 +50,7 @@ export default function Settings() {
 
   React.useEffect(() => {
     if (navigateToProfile) navigate("/profile");
-    if (account.activePage.name !== "settings") dispatch(setActivePage({ name: "settings" }));
+    dispatch(setActivePage({ name: "settings" }));
   }, [navigateToProfile, navigate, dispatch]);
 
   return (
