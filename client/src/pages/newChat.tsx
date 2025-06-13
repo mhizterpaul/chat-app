@@ -2,7 +2,7 @@ import * as React from "react";
 import TabPanel from "@mui/lab/TabPanel";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
-import { z } from "../../../shared/node_modules/zod";
+import z from "zod";
 import { HiOutlinePlus } from "react-icons/hi2";
 import avatar from "../assets/group.svg";
 import EditIcon from "../components/ui/editIcon";
@@ -42,7 +42,7 @@ function NewConversation() {
   const containerRef = React.useRef(null);
   const { type } = useParams();
   const [value, setValue] = React.useState(type === "channel" ? "0" : "1");
-  const handleTab = (event: React.SyntheticEvent, newValue: string) => {
+  const handleTab = (_: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
   const navigate = useNavigate();
@@ -120,23 +120,41 @@ function NewConversation() {
             centered
             sx={{
               "& .MuiTabs-flexContainer": {
+                marginTop: "1.5rem",
                 backgroundColor: "background.default",
-                justifyContent: "space-between",
+                justifyContent: "space-around",
                 paddingLeft: "2rem",
                 paddingRight: "2rem",
                 borderRadius: "1rem",
+                boxShadow:
+                  "inset 0 2px 8px 0 rgba(0,0,0,0.15), inset 0 -2px 8px 0 rgba(0,0,0,0.10)",
               },
               "& button.MuiTab-root": {
                 maxWidth: 200,
                 textTransform: "capitalize",
                 fontWeight: "bold",
               },
-              "& button.Mui-selected": {
-                backgroundColor: "background.paper",
-                borderRadius: "1.5rem",
+              "& div.css-18hvpog-MuiPaper-root-MuiSnackbarContent-root": {
+                boxShadow: "0px 1px 5px -1px rgba(0,0,0,0.2), 0px 2px 10px 0px rgba(0,0,0,0.14), 0px 1px 8px 0px rgba(0,0,0,0.12)",
               },
-              "& div.MuiSnackbarContent-message": {
-                marginLeft: "4.5rem",
+              "& button.Mui-selected": {
+                borderRadius: "1.5rem",
+                background: "background.paper",
+              },
+              '& button.MuiTab-root[aria-selected="false"]': {
+                boxShadow: 'inset 0 2px 8px 0 rgba(0,0,0,0.10)',
+                background: 'background.paper',
+                borderRadius: '1rem',
+                marginTop: "0.6rem",
+                marginBottom: "0.6rem",
+                width: "25%",
+                transition: 'box-shadow 0.2s, border 0.2s',
+              },
+              "& .MuiSnackbarContent-root": {
+                marginLeft: "5rem",
+              },
+              "& .MuiSnackbarContent-message": {
+                marginLeft: "2.5rem",
                 color: theme.palette.green.main,
               },
               "& span.MuiTabs-indicator": {

@@ -31,7 +31,7 @@ Welcome to the Chat App! This application allows instant messaging between two o
    ```
 2. **Install dependencies**:
    ```bash
-   cd client && npm install
+   cd client && npm install --legacy-peer-deps
    cd server && npm install
    ```
 

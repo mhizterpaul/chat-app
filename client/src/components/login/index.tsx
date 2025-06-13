@@ -2,7 +2,7 @@ import * as React from "react";
 import { Box, TextField, Button } from "@mui/material";
 import { useFormik } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import validationSchema from "../../../../shared/schemas/login";
+import validationSchema from "../../schemas/login";
 import { customStyle } from "../../utils/constants";
 import { login } from "../../store/slices/user/actions";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";

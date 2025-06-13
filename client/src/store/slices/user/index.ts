@@ -30,6 +30,14 @@ const userSlice = createSlice({
     setActivePage: (state, { payload }) => {
       state.activePage = payload;
     },
+    updateTestUser: (state, { payload }) => {
+      state.user = {
+        ...state.user,
+        ...payload,
+        image: avatar,
+        profileSetup: true,
+      };
+    }
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
@@ -76,7 +84,7 @@ const userSlice = createSlice({
         ),
         (state, action) => {
           state.user = action.payload;
-          if (!action.payload.image)
+          if (!action.payload?.image)
             state.user = { ...action.payload, image: avatar };
           state.loading = "succeeded";
           state.error = null;
@@ -100,5 +108,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { setActivePage } = userSlice.actions;
+export const { setActivePage, updateTestUser } = userSlice.actions;
 export default userSlice.reducer;

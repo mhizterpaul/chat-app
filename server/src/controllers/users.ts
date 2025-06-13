@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction, response } from "express";
-import loginSchema from "../../../shared/schemas/login";
-import signupSchema from "../../../shared/schemas/signup";
+import loginSchema from "../schemas/login";
+import signupSchema from "../schemas/signup";
 import Users from "../models/users";
 import jwt from "jsonwebtoken";
 import z from "../../../shared/node_modules/zod";

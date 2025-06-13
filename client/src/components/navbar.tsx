@@ -61,7 +61,7 @@ export default function Navbar({ children }: Props) {
               ) : null}
             </Typography>
           </Box>
-          {[1].map(() => {
+          {[1].map((_, idx) => {
             let icon: React.ReactNode | null = null;
             switch (name) {
               case "settings":
@@ -73,6 +73,7 @@ export default function Navbar({ children }: Props) {
             if (description) {
               return (
                 <IconButton
+                  key={`navbar-icon-desc-${idx}`}
                   size="large"
                   aria-label="open drawer"
                   edge="end"
@@ -89,15 +90,17 @@ export default function Navbar({ children }: Props) {
             }
             return icon ? (
               <IconButton
+                key={`navbar-icon-${name}-${idx}`}
                 size="large"
                 edge="start"
                 color="inherit"
+                onClick={() => name === "new-chat" && navigate("/chats")}
                 sx={{ mr: 2, color: "text.secondary" }}
               >
                 {icon}
               </IconButton>
             ) : (
-              <Box sx={{ maxWidth: "5vw", flexGrow: 1 }} />
+              <Box key={`navbar-empty-${idx}`} sx={{ maxWidth: "5vw", flexGrow: 1 }} />
             );
           })}
         </Toolbar>

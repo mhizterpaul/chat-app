@@ -4,7 +4,7 @@ import { TabPanel, TabContext, TabList } from "@mui/lab";
 import { useAppSelector } from "../store/hooks";
 import { RootState } from "../store";
 import Login from "../components/login";
-import Signup from "../components/signup";
+import Signup from "../components/signUp";
 import { useNavigate } from "react-router-dom";
 import VictoryIcon from "../components/ui/victory";
 
@@ -16,6 +16,9 @@ export default function SignOn() {
   React.useEffect(() => {
     if (user) {
       navigate("/chats");
+    }
+    if (import.meta.env.VITE_ENV !== "production") {
+      setTimeout(() => navigate("/chats"), 500)
     }
   }, [user, navigate]);
 

@@ -16,7 +16,6 @@ import {
   OutlinedInput,
   Menu,
 } from "@mui/material";
-import action from "../../store/slices/user/actions";
 import { useFormik } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import validationSchema from "./schema";
@@ -27,10 +26,12 @@ import { RootState } from "../../store";
 import { useNavigate } from "react-router-dom";
 import { setActivePage } from "../../store/slices/user";
 import { User } from "../../store/slices/user/types";
+import { updateTestUser } from "../../store/slices/user";
 import {
   addProfileImage,
   removeProfileImage,
   getUserInfo,
+  updateProfile,
 } from "../../store/slices/user/actions";
 
 export default function EditProfile() {
@@ -41,7 +42,7 @@ export default function EditProfile() {
 
   //Route Guard
   React.useEffect(() => {
-    if (!account.user) navigate("sign-on");
+    if (!account.user && import.meta.env.VITE_ENV === "production") navigate("sign-on");
     if (account.user?.profileSetup) navigate("/chats");
     dispatch(setActivePage({ name: "profile" }));
   }, [account.user, dispatch, navigate]);
@@ -70,8 +71,10 @@ export default function EditProfile() {
     handleSubmit,
   } = useFormik({
     initialValues: {
-      email: "",
-      name: "",
+      image: account.user?.image,
+      email: account.user?.email,
+      name: account.user?.firstName +
+        " " + account.user?.lastName,
       password: "",
       homepage: "Homepage",
     },
@@ -81,8 +84,19 @@ export default function EditProfile() {
       const Values = Object(values);
       const name = Values.name.split(" ");
       delete Values["name"];
+      if (import.meta.env.VITE_ENV !== "production") {
+        dispatch(
+          updateTestUser({
+            firstName: name[0],
+            lastName: name[1],
+            ..._user,
+            ...Values,
+          })
+        );
+        return;
+      }
       dispatch(
-        action.updateProfile({
+        updateProfile({
           firstName: name[0],
           lastName: name[1],
           ..._user,
@@ -204,7 +218,7 @@ export default function EditProfile() {
             name="email"
             variant="outlined"
             aria-label="email"
-            value={values.email}
+            value={values.email || ""}
             error={touched.email && Boolean(errors.email)}
             helperText={touched.email && errors.email}
           />
@@ -236,7 +250,7 @@ export default function EditProfile() {
             name="name"
             variant="outlined"
             aria-label="name"
-            value={values.name}
+            value={values.name || ""}
             onBlur={handleBlur}
             onChange={handleChange}
             error={touched.name && Boolean(errors.name)}
@@ -254,7 +268,7 @@ export default function EditProfile() {
             }}
             required
             placeholder="Password"
-            value={values.password}
+            value={values.password || ""}
             name="password"
             type="password"
             label="Password"
@@ -267,7 +281,7 @@ export default function EditProfile() {
           />
           <Select
             displayEmpty
-            value={values.homepage}
+            value={values.homepage || "Homepage"}
             onChange={handleChange}
             onBlur={handleBlur}
             label={values.homepage}

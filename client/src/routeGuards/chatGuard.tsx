@@ -4,7 +4,7 @@ import { RootState } from "../store";
 import { useNavigate } from "react-router-dom";
 import * as React from "react";
 
-const AppGuard = () => {
+const ChatGuard = () => {
   const navigate = useNavigate();
   const selector = (state: RootState) => state.account.user;
   const user = useAppSelector(selector);
@@ -19,4 +19,4 @@ const AppGuard = () => {
   return <Outlet />;
 };
 
-export default AppGuard;
+export default ChatGuard;

@@ -1,33 +1,36 @@
 import * as React from "react";
 import { Box, BottomNavigation, BottomNavigationAction } from "@mui/material";
 import ProfileIcon from "../components/ui/profileIcon";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { useAppSelector, useAppDispatch } from "../store/hooks";
 import { setActivePage } from "../store/slices/user";
+import { useNavigate, useLocation } from "react-router-dom";
 import { RootState } from "../store";
-import { useNavigate } from "react-router-dom";
+
 export default function SimpleBottomNavigation() {
+
   const selector = (state: RootState) => state.account.activePage;
   const activePage = useAppSelector(selector);
-  const [value, setValue] = React.useState(activePage.name);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [page, setPage] = React.useState("chats");
+  const location = useLocation();
+  const [page, setPage] = React.useState(activePage.name);
+
   React.useEffect(() => {
     if (page === "new-chat") {
       navigate("/new-chat/private");
       return;
     }
-    navigate("/" + page);
+    if (location.pathname !== "/" + page) navigate("/" + page);
   }, [page, navigate]);
+
   return (
     <Box sx={{ marginTop: "2.5rem" }}>
       <BottomNavigation
         showLabels
-        value={value}
-        onChange={(event, newValue) => {
-          setValue(newValue);
-          dispatch(setActivePage({ name: newValue }));
+        value={page}
+        onChange={(_, newValue) => {
           setPage(newValue);
+          dispatch(setActivePage({ name: newValue }));
         }}
         className=" relative flex content-between "
       >

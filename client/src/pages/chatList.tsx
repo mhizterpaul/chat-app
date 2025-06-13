@@ -14,12 +14,13 @@ import * as React from "react";
 export default function ChatList() {
   const selector = (state: RootState) => state.chats;
   const dispatch = useAppDispatch();
-  dispatch(action.getChannels());
-  dispatch(action.getDmList());
   const chats = useAppSelector(selector);
   const navigate = useNavigate();
+
   React.useEffect(() => {
     dispatch(setActivePage({ name: "chats" }));
+    dispatch(action.getChannels());
+    dispatch(action.getDmList());
   }, [dispatch]);
 
   const chatList = [

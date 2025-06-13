@@ -42,7 +42,7 @@ function SelectMembers({ type, setChannel, selectContacts }: Props) {
     if (type === "private" && startTransition.length) {
       navigate("/messages/private/" + startTransition);
     }
-    setTimeout(() => !contacts.length && dispatch(getContacts()), 2000);
+    setTimeout(() => contacts && !contacts.length && dispatch(getContacts()), 2000);
   }, [type, contacts, navigate, dispatch, startTransition]);
 
   const handleChange = (event: React.SyntheticEvent) => {
@@ -50,16 +50,20 @@ function SelectMembers({ type, setChannel, selectContacts }: Props) {
     const value = target.parentElement?.parentElement?.getAttribute("value");
 
     if (!value) return;
-    
+
     if (type === "private" && contacts.length > 0) {
       const id = contacts.filter((contact) => contact.id === value)[0].id;
       setStartTransition(id);
     }
     const idx = personName.indexOf(value);
     setPersonName((curr) =>
-      idx != -1 ? curr.filter((el, id) => id != idx) : [...curr, value]
+      idx != -1 ? curr.filter((_, id) => id != idx) : [...curr, value]
     );
   };
+
+  const contactsSafe = Array.isArray(contacts) ? contacts : [];
+  const searchSafe = Array.isArray(search) ? search : [];
+
   return (
     <>
       <Container className=" px-8 mt-8 ">
@@ -105,53 +109,51 @@ function SelectMembers({ type, setChannel, selectContacts }: Props) {
           onClick={handleChange}
           className=" mt-6 overflow-y-scroll overflow-x-hidden"
         >
-          {search.length
-            ? search.map(({ firstName, lastName, image, id }) => (
-                <MenuItem
-                  key={id}
-                  value={`${firstName} ${lastName}`}
-                  sx={{ mb: "1rem" }}
-                  className=" rounded-lg shadow-lg p-4 "
-                >
-                  <Avatar
-                    alt={`${firstName} ${lastName}`}
-                    src={image}
-                    sx={{
-                      marginRight: "1.25rem",
-                    }}
-                    className={`${
-                      personName.includes(id) ? "ring-1 ring-[#4ab6f7]" : ""
+          {searchSafe.length
+            ? searchSafe.map(({ firstName, lastName, image, id }) => (
+              <MenuItem
+                key={id}
+                value={`${firstName} ${lastName}`}
+                sx={{ mb: "1rem" }}
+                className=" rounded-lg shadow-lg p-4 "
+              >
+                <Avatar
+                  alt={`${firstName} ${lastName}`}
+                  src={image}
+                  sx={{
+                    marginRight: "1.25rem",
+                  }}
+                  className={`$
+                      {personName.includes(id) ? "ring-1 ring-[#4ab6f7]" : ""}
+                    `}
+                />
+                <ListItemText primary={`${firstName} ${lastName}`} />
+                {type === "channel" ? (
+                  <Checkbox checked={personName.includes(id)} />
+                ) : null}
+              </MenuItem>
+            ))
+            : contactsSafe.map(({ label, avatar, id }) => (
+              <MenuItem
+                key={id}
+                value={id}
+                sx={{ mb: "1rem" }}
+                className=" rounded-lg shadow-lg p-4 "
+              >
+                <Avatar
+                  alt={label}
+                  src={avatar}
+                  sx={{ marginRight: "1.25rem" }}
+
+                  className={`${personName.includes(id) ? "ring-1 ring-[#4ab6f7]" : ""
                     }`}
-                  />
-                  <ListItemText primary={`${firstName} ${lastName}`} />
-                  {type === "channel" ? (
-                    <Checkbox checked={personName.includes(id)} />
-                  ) : null}
-                </MenuItem>
-              ))
-            : contacts.map(({ label, avatar, id }) => (
-                <MenuItem
-                  key={id}
-                  value={id}
-                  sx={{ mb: "1rem" }}
-                  className=" rounded-lg shadow-lg p-4 "
-                >
-                  <Avatar
-                    alt={label}
-                    src={avatar}
-                    sx={{
-                      marginRight: "1.25rem",
-                    }}
-                    className={`${
-                      personName.includes(id) ? "ring-1 ring-[#4ab6f7]" : ""
-                    }`}
-                  />
-                  <ListItemText primary={label} />
-                  {type === "channel" ? (
-                    <Checkbox checked={personName.includes(id)} />
-                  ) : null}
-                </MenuItem>
-              ))}
+                />
+                <ListItemText primary={label} />
+                {type === "channel" ? (
+                  <Checkbox checked={personName.includes(id)} />
+                ) : null}
+              </MenuItem>
+            ))}
         </MenuList>
         <Button
           size="large"

@@ -1,5 +1,5 @@
 //returns validation schema for zod
-import { z } from "zod";
+import z from "zod";
 
 export default z
   .object({

@@ -20,7 +20,6 @@ import { RiFontSize2 } from "react-icons/ri";
 import { RootState } from "../store/";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { useNavigate } from "react-router-dom";
-import { User } from "../store/slices/user/types";
 import { setActivePage } from "../store/slices/user";
 
 const stackItemStyle = {
@@ -42,16 +41,18 @@ const stackItemStyle = {
 };
 
 export default function Settings() {
-  const selector = (state: RootState) => state.account.user;
-  const user = useAppSelector(selector) as User;
+  const selector = (state: RootState) => state.account;
+  const account = useAppSelector(selector);
+  const user = account.user;
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [navigateToProfile, setNavigateToProfile] = React.useState(false);
 
   React.useEffect(() => {
     if (navigateToProfile) navigate("/profile");
-    dispatch(setActivePage({ name: "settings" }));
+    if (account.activePage.name !== "settings") dispatch(setActivePage({ name: "settings" }));
   }, [navigateToProfile, navigate, dispatch]);
+
   return (
     <>
       <Container
@@ -85,8 +86,8 @@ export default function Settings() {
             <CardMedia
               component="img"
               sx={{ width: "50%" }}
-              image={user.image}
-              alt="david"
+              image={user?.image || ""}
+              alt={user?.firstName || "Profile"}
               className=" rounded-full border-[#8653cb] p-1 border-[3px]  mx-auto"
             />
             <IconButton className=" absolute right-[24%] bottom-1 sm:right-[26%] sm:bottom-[3%] ">
@@ -100,10 +101,10 @@ export default function Settings() {
               className=" text-center capitalize "
               component="div"
             >
-              {`${user.firstName} ${user.lastName}`}
+              {`${user?.firstName || ""} ${user?.lastName || ""}`}
             </Typography>
             <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              {user.email}
+              {user?.email || ""}
             </Typography>
           </CardContent>
           <CardActions>
@@ -145,9 +146,9 @@ export default function Settings() {
               <g
                 fill="none"
                 stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1.5"
                 color="currentColor"
               >
                 <circle cx="12" cy="12" r="10" />
@@ -191,7 +192,7 @@ export default function Settings() {
               />
             </svg>
             <Typography variant="body2">Dark Mode </Typography>
-            <Switch className="ml-auto" />
+            <Switch className="ml-auto" id="dark-mode-switch" name="darkMode" />
           </Box>
           <Button>Update</Button>
         </Stack>

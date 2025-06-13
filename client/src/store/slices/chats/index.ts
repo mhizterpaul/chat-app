@@ -56,7 +56,7 @@ const chatSlice = createSlice({
           // Add user to the state array
           state.loading = "succeeded";
           state.error = null;
-          switch (typeof (action.payload.name || action.payload._id)) {
+          switch (typeof (action.payload?.name || action.payload?._id)) {
             case "string":
               state.channelList = action.payload;
               break;
