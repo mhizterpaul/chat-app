@@ -151,7 +151,10 @@ function NewConversation() {
                 transition: 'box-shadow 0.2s, border 0.2s',
               },
               "& .MuiSnackbarContent-message": {
-                transform: "translateX(6rem);",
+                transform: {
+                  xs: "translateX(0)",
+                  sm: "translateX(6rem)"
+                },
                 color: theme.palette.green.main,
               },
               "& span.MuiTabs-indicator": {
